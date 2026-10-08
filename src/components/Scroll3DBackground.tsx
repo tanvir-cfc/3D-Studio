@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 interface Scroll3DBackgroundProps {
@@ -12,11 +12,6 @@ interface Scroll3DBackgroundProps {
  */
 export const Scroll3DBackground: React.FC<Scroll3DBackgroundProps> = ({ theme, activePage }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollMetrics, setScrollMetrics] = useState({
-    progress: 0,
-    zDepth: 0,
-    pitch: 0,
-  });
 
   useEffect(() => {
     const container = containerRef.current;
@@ -233,7 +228,6 @@ export const Scroll3DBackground: React.FC<Scroll3DBackgroundProps> = ({ theme, a
     updateScrollTarget();
 
     let frameId = 0;
-    let frameCounter = 0;
 
     const animate = () => {
       frameId = requestAnimationFrame(animate);
@@ -268,16 +262,6 @@ export const Scroll3DBackground: React.FC<Scroll3DBackgroundProps> = ({ theme, a
       });
 
       renderer.render(scene, camera);
-
-      // Update HUD telemetry every 6 frames to avoid React re-render overhead
-      frameCounter++;
-      if (frameCounter % 6 === 0) {
-        setScrollMetrics({
-          progress: Math.round(currentScrollRatio * 100),
-          zDepth: Number((currentScrollRatio * -56).toFixed(1)),
-          pitch: Number(((pitchAngle * 180) / Math.PI).toFixed(1)),
-        });
-      }
     };
 
     animate();
@@ -292,33 +276,10 @@ export const Scroll3DBackground: React.FC<Scroll3DBackgroundProps> = ({ theme, a
   }, [theme, activePage]);
 
   return (
-    <>
-      {/* Fixed Full-Viewport Three.js 3D Spatial Canvas */}
-      <div
-        ref={containerRef}
-        className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
-        aria-hidden="true"
-      />
-
-      {/* Minimal Architectural 3D Z-Axis Depth HUD on Left Viewport Edge (Desktop) */}
-      <div
-        className="hidden xl:flex fixed left-3 top-1/2 -translate-y-1/2 z-30 pointer-events-none flex-col items-start gap-2"
-        aria-hidden="true"
-      >
-        <div className="px-2 py-1.5 bg-white/80 dark:bg-[#090A0C]/80 border border-black/15 dark:border-white/10 text-[10px] font-mono-tabular text-[#475569] dark:text-[#94A3B8] space-y-1">
-          <div className="text-[#090A0C] dark:text-[#FACC15] font-semibold">3D CAM</div>
-          <div>Z: {scrollMetrics.zDepth.toFixed(1)}m</div>
-          <div>∠: {scrollMetrics.pitch.toFixed(1)}°</div>
-          <div>{String(scrollMetrics.progress).padStart(2, '0')}%</div>
-        </div>
-        {/* Vertical 3D Scroll Progress Rail */}
-        <div className="w-1 h-28 bg-black/10 dark:bg-white/10 relative overflow-hidden ml-2">
-          <div
-            className="w-full bg-[#090A0C] dark:bg-[#FACC15] transition-all duration-75"
-            style={{ height: `${scrollMetrics.progress}%` }}
-          />
-        </div>
-      </div>
-    </>
+    <div
+      ref={containerRef}
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
+      aria-hidden="true"
+    />
   );
 };
