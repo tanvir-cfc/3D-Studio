@@ -33,6 +33,15 @@ import {
 } from './components/Interactive3DModelViewer';
 import { QuoteCalculator, QuoteConfiguration } from './components/QuoteCalculator';
 import { ProjectLightboxModal } from './components/ProjectLightboxModal';
+import { Scroll3DBackground } from './components/Scroll3DBackground';
+import { Scroll3DChoreography } from './components/Scroll3DChoreography';
+import { Scroll3DSection, Tilt3DCard } from './components/Scroll3DReveal';
+import {
+  ScrollExpand3DContainer,
+  VelocityScrollMarquee,
+  StickyStackingDeck,
+  PinnedHorizontal3DStrip,
+} from './components/MusemindScrollEffects';
 
 export type PageId = 'home' | 'services' | 'models' | 'portfolio' | 'estimator' | 'contact';
 
@@ -160,7 +169,9 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F6F6F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-[#F4F4F0] flex flex-col transition-colors duration-150">
+    <div className="min-h-screen bg-[#F6F6F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-[#F4F4F0] flex flex-col transition-colors duration-150 relative">
+      {/* Global Full-Viewport Scroll-Reactive Three.js 3D Spatial Environment */}
+      <Scroll3DBackground theme={theme} activePage={activePage} />
       {/* =====================================================================
           TOP BAR CONTRACT (Strict 1-Row, 3-Zone Contract, Zero Radius)
           Zone 1: Uploaded Brand Logo
@@ -237,7 +248,7 @@ export default function App() {
       {/* =====================================================================
           MULTI-PAGE ROUTER VIEWPORT
       ====================================================================== */}
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         {/* -------------------------------------------------------------------
             PAGE 1: HOME PAGE
         -------------------------------------------------------------------- */}
@@ -245,7 +256,7 @@ export default function App() {
           <div>
             {/* Hero Section */}
             <section className="pt-12 pb-20 lg:pt-16 lg:pb-24 border-b border-black/15 dark:border-white/10">
-              <div className="max-w-[1280px] mx-auto px-6">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6" intensity={0.85}>
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end mb-12">
                   <div className="lg:col-span-8 space-y-5">
                     <div className="flex items-center gap-2 text-xs text-[#475569] dark:text-[#94A3B8]">
@@ -312,10 +323,12 @@ export default function App() {
                     </button>
                   </div>
 
-                  <Interactive3DModelViewer
-                    initialPreset="turbine"
-                    onSelectPresetForQuote={handleCommission3DModel}
-                  />
+                  <ScrollExpand3DContainer>
+                    <Interactive3DModelViewer
+                      initialPreset="turbine"
+                      onSelectPresetForQuote={handleCommission3DModel}
+                    />
+                  </ScrollExpand3DContainer>
                 </div>
 
                 {/* Verified Studio Production Metrics */}
@@ -388,12 +401,32 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </Scroll3DSection>
             </section>
 
+            {/* MUSEMIND SCROLL 1: Velocity-Reactive Dual-Direction Kinetic Marquee */}
+            <VelocityScrollMarquee />
+
+            {/* MUSEMIND SCROLL 2: Sticky Stacking 3D Case Study Deck */}
+            <StickyStackingDeck
+              onSelectProject={(project) => setActiveLightboxProject(project)}
+              onNavigatePortfolio={() => navigateToPage('portfolio')}
+            />
+
+            {/* MUSEMIND SCROLL 3: Scroll-Driven 3D Exploded Choreography Showcase */}
+            <Scroll3DChoreography onOpenStudio={() => navigateToPage('models')} />
+
+            {/* MUSEMIND SCROLL 4: Pinned Vertical-to-Horizontal 3D Asset Reel */}
+            <PinnedHorizontal3DStrip
+              onSelectModelInStudio={(presetId) => {
+                setSelectedStudioModel(presetId);
+                navigateToPage('models');
+              }}
+            />
+
             {/* Home Section 2: 8K Before/After Render Pass Inspector */}
-            <section className="py-20 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9] dark:bg-[#0B0D10]">
-              <div className="max-w-[1280px] mx-auto px-6">
+            <section className="py-20 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                   <div>
                     <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
@@ -422,15 +455,15 @@ export default function App() {
                   engine="V-Ray 7"
                   onOpenLightbox={() => setActiveLightboxProject(PORTFOLIO_ITEMS[0])}
                 />
-              </div>
+              </Scroll3DSection>
             </section>
 
             {/* Home Section 3: Dedicated Page Directory & Vikram Kline Testimonial */}
             <section className="py-20">
-              <div className="max-w-[1280px] mx-auto px-6 space-y-16">
-                {/* Quick Navigation Cards to Dedicated Pages */}
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-16">
+                {/* Quick Navigation Cards to Dedicated Pages with 3D Spatial Tilt */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div
+                  <Tilt3DCard
                     onClick={() => navigateToPage('services')}
                     className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
@@ -450,9 +483,9 @@ export default function App() {
                       <span>Open Services Page</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
-                  </div>
+                  </Tilt3DCard>
 
-                  <div
+                  <Tilt3DCard
                     onClick={() => navigateToPage('models')}
                     className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
@@ -472,9 +505,9 @@ export default function App() {
                       <span>Open 3D Studio Page</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
-                  </div>
+                  </Tilt3DCard>
 
-                  <div
+                  <Tilt3DCard
                     onClick={() => navigateToPage('portfolio')}
                     className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
@@ -494,9 +527,9 @@ export default function App() {
                       <span>Open Portfolio Page</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
-                  </div>
+                  </Tilt3DCard>
 
-                  <div
+                  <Tilt3DCard
                     onClick={() => navigateToPage('estimator')}
                     className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
@@ -516,7 +549,7 @@ export default function App() {
                       <span>Open Estimator Page</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
-                  </div>
+                  </Tilt3DCard>
                 </div>
 
                 {/* Attributable Client Testimonial */}
@@ -584,7 +617,7 @@ export default function App() {
                     </ul>
                   </div>
                 </div>
-              </div>
+              </Scroll3DSection>
             </section>
           </div>
         )}
@@ -595,7 +628,7 @@ export default function App() {
         {activePage === 'services' && (
           <div>
             <section className="py-16 lg:py-24 border-b border-black/15 dark:border-white/10">
-              <div className="max-w-[1280px] mx-auto px-6">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14 pb-8 border-b border-black/15 dark:border-white/10">
                   <div>
                     <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
@@ -684,12 +717,12 @@ export default function App() {
                     );
                   })}
                 </div>
-              </div>
+              </Scroll3DSection>
             </section>
 
             {/* 4-Stage Production Workflow Section */}
-            <section className="py-20 bg-[#EFEFE9] dark:bg-[#0B0D10]">
-              <div className="max-w-[1280px] mx-auto px-6">
+            <section className="py-20 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
                   <div>
                     <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
@@ -812,7 +845,7 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Scroll3DSection>
             </section>
           </div>
         )}
@@ -822,7 +855,7 @@ export default function App() {
         -------------------------------------------------------------------- */}
         {activePage === 'models' && (
           <section className="py-16 lg:py-24">
-            <div className="max-w-[1280px] mx-auto px-6 space-y-14">
+            <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14" intensity={0.75}>
               <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
                 <div>
                   <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
@@ -927,7 +960,7 @@ export default function App() {
                   onOpenLightbox={() => setActiveLightboxProject(PORTFOLIO_ITEMS[4])}
                 />
               </div>
-            </div>
+            </Scroll3DSection>
           </section>
         )}
 
@@ -936,7 +969,7 @@ export default function App() {
         -------------------------------------------------------------------- */}
         {activePage === 'portfolio' && (
           <section className="py-16 lg:py-24">
-            <div className="max-w-[1280px] mx-auto px-6">
+            <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-8 border-b border-black/15 dark:border-white/10">
                 <div>
                   <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
@@ -985,8 +1018,9 @@ export default function App() {
                       : 'lg:col-span-6';
 
                   return (
-                    <div
+                    <Tilt3DCard
                       key={item.id}
+                      maxTilt={4}
                       onClick={() => setActiveLightboxProject(item)}
                       className={`${spanClass} group border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] overflow-hidden flex flex-col justify-between cursor-pointer hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors`}
                     >
@@ -1032,11 +1066,11 @@ export default function App() {
                           </span>
                         </div>
                       </div>
-                    </div>
+                    </Tilt3DCard>
                   );
                 })}
               </div>
-            </div>
+            </Scroll3DSection>
           </section>
         )}
 
