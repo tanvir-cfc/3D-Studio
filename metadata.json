@@ -1,0 +1,6 @@
+{
+  "name": "3D Modeling Company",
+  "description": "Global 3D modeling, photorealistic rendering, architectural visualization, and interactive spatial CGI studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
