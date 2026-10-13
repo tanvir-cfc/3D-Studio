@@ -317,3 +317,180 @@ export const CLIENT_BRANDS = [
   { name: 'HELIOS OPTICS', sector: 'Boston · Aerospace' },
   { name: 'NORDIC FORM STUDIO', sector: 'Copenhagen · Furniture' },
 ];
+
+export interface AwardItem {
+  id: string;
+  year: string;
+  title: string;
+  organization: string;
+  category: string;
+  badge: string;
+}
+
+export const AWARDS: AwardItem[] = [
+  {
+    id: 'award-1',
+    year: '2026',
+    title: 'Site of the Day Nominee',
+    organization: 'Awwwards Global',
+    category: 'Real-Time WebGL & Spatial Architecture',
+    badge: 'AWWWARDS SOTD',
+  },
+  {
+    id: 'award-2',
+    year: '2025',
+    title: 'Curator 3D & CGI Showcase Winner',
+    organization: 'Behance Interaction & 3D Network',
+    category: 'Precision Watch & Tourbillon CGI',
+    badge: 'BEHANCE FEATURE',
+  },
+  {
+    id: 'award-3',
+    year: '2025',
+    title: 'Top 3D Modeling & CGI Agency Globally',
+    organization: 'Clutch B2B Leaders',
+    category: '4.9/5 Star Verified Client Rating',
+    badge: 'CLUTCH TOP 1%',
+  },
+  {
+    id: 'award-4',
+    year: '2024',
+    title: 'ArchViz Visualizer of the Year Finalist',
+    organization: 'CGArchitect Awards',
+    category: 'Brutalist Concrete Pavilion Twilight Series',
+    badge: 'CGARCHITECT FINALIST',
+  },
+  {
+    id: 'award-5',
+    year: '2024',
+    title: 'Excellence in Technical Mechanical Motion',
+    organization: 'Visual Effects Society (VES) Forum',
+    category: 'Aerospace Turbine Exploded Engineering 3D',
+    badge: 'VES RECOGNITION',
+  },
+];
+
+export interface TestimonialItem {
+  id: string;
+  quote: string;
+  author: string;
+  role: string;
+  company: string;
+  location: string;
+  avatarInitials: string;
+  projectType: string;
+  outcomeMetric: string;
+  rating: number;
+}
+
+export const TESTIMONIALS: TestimonialItem[] = [
+  {
+    id: 'test-1',
+    quote:
+      'Working with 3D Modeling Company was a decisive commercial turning point. Before engaging their LookDev team, physical sample photography delayed our horology catalog launches by 6 weeks. Their sub-micron micro-bevel precision and caustic sapphire light calculation yielded an instantaneous +165% pre-order conversion surge across our global digital flagships.',
+    author: 'Vikram Kline',
+    role: 'Chief Executive Officer',
+    company: 'Marketplace Luxury Group LLC',
+    location: 'Geneva & New York',
+    avatarInitials: 'VK',
+    projectType: 'High Horology CAD-to-CGI',
+    outcomeMetric: '+165% Pre-Order Conversion',
+    rating: 5,
+  },
+  {
+    id: 'test-2',
+    quote:
+      'In luxury architectural development, municipal approval and off-plan sales demand absolute realism. 3D Modeling Company translated our complex Revit blueprints into an 8K twilight lakefront villa with photorealistic concrete displacement and alpine reflection. The property achieved full municipal sign-off and closed a $14.2M private reservation before ground was broken.',
+    author: 'Elena Rostova',
+    role: 'Lead Architect & Partner',
+    company: 'Keller & Partner Architekten',
+    location: 'Zurich, Switzerland',
+    avatarInitials: 'ER',
+    projectType: 'Architectural Visualization & UE5 Walkthrough',
+    outcomeMetric: '$14.2M Off-Plan Private Sale',
+    rating: 5,
+  },
+  {
+    id: 'test-3',
+    quote:
+      'Explaining our proprietary coaxial turbine assembly to enterprise aerospace stakeholders using 2D technical drawings was losing us deals. Their team converted our raw SolidWorks files into synchronized 60fps exploded cutaways and an interactive WebGL inspector. It slashed our enterprise technical briefing cycle by 34% within one quarter.',
+    author: 'Dr. Marcus Vance',
+    role: 'VP of Product Engineering',
+    company: 'Helios Defense & Optics',
+    location: 'Boston, MA',
+    avatarInitials: 'MV',
+    projectType: 'Exploded Mechanical Animation',
+    outcomeMetric: '-34% Enterprise Sales Cycle Duration',
+    rating: 5,
+  },
+];
+
+export interface InsightArticle {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  readTime: string;
+  excerpt: string;
+  author: string;
+  tags: string[];
+}
+
+export const INSIGHTS_ARTICLES: InsightArticle[] = [
+  {
+    id: 'insight-1',
+    title: 'Why Real-Time WebGL & USDZ Are Replacing Flat E-Commerce Photography in 2026',
+    category: 'Spatial Commerce & WebXR',
+    date: 'October 2026',
+    readTime: '5 min read',
+    excerpt:
+      'Modern consumers expect interactive 360-degree inspection, material customization, and Apple Vision Pro spatial placement before purchasing high-ticket goods. Here is how leading brands achieve 3.2× higher add-to-cart rates.',
+    author: 'LookDev Research Lab',
+    tags: ['WebXR', 'USDZ', 'E-Commerce 3D', 'Three.js'],
+  },
+  {
+    id: 'insight-2',
+    title: 'Subdivision Quad Topology vs. Triangular Meshes: The Engineering Audit',
+    category: '3D Geometry & Pipelines',
+    date: 'September 2026',
+    readTime: '7 min read',
+    excerpt:
+      'Why automated mesh decimation creates catastrophic shading artifacts during ray-tracing, and how handcrafted quad topology preserves clean curvature highlights across million-dollar industrial CAD files.',
+    author: 'Engineering Modeling Team',
+    tags: ['Quad Topology', 'CAD to CGI', 'Subdivision', 'STEP Ingestion'],
+  },
+  {
+    id: 'insight-3',
+    title: 'Mastering ACEScg Color Workflows in Architectural Visualization',
+    category: 'Lighting & Color Science',
+    date: 'August 2026',
+    readTime: '6 min read',
+    excerpt:
+      'Standard sRGB clipping destroys high-dynamic-range sunlight through architectural glass. We explain how an ACEScg 32-bit linear pipeline captures both searing direct sunlight and subtle ambient bounce in single EXR frames.',
+    author: 'Lighting & Shading Director',
+    tags: ['ACEScg', 'V-Ray 7', 'Corona Renderer', 'OpenEXR'],
+  },
+];
+
+export const STUDIO_METRICS = [
+  {
+    number: '140+',
+    label: 'Global Enterprise Clients',
+    detail: 'Architectural firms, watchmakers, and OEMs in 18 countries.',
+  },
+  {
+    number: '4,200+',
+    label: '3D Assets & Scenes Delivered',
+    detail: 'Zero-defect watertight geometry verified across 12 years.',
+  },
+  {
+    number: '99.4%',
+    label: 'On-Time Milestone Rate',
+    detail: 'Structured 4-stage revision gates with browser-based proofs.',
+  },
+  {
+    number: '16',
+    label: 'Industry Awards & Features',
+    detail: 'Recognized by Awwwards, Behance, Clutch, and CGArchitect.',
+  },
+];

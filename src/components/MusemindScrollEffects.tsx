@@ -68,7 +68,9 @@ export const ScrollExpand3DContainer: React.FC<{ children: React.ReactNode }> = 
  * Accelerates with scroll velocity, reverses direction when scrolling up vs. down,
  * and applies dynamic velocity skew.
  */
-export const VelocityScrollMarquee: React.FC = () => {
+export const VelocityScrollMarquee: React.FC<{ variant?: 'light' | 'dark' }> = ({
+  variant = 'dark',
+}) => {
   const track1Ref = useRef<HTMLDivElement>(null);
   const track2Ref = useRef<HTMLDivElement>(null);
 
@@ -146,9 +148,15 @@ export const VelocityScrollMarquee: React.FC = () => {
     'ISO-27001 NDA PROTECTED',
   ];
 
+  const isLight = variant === 'light';
+
   return (
     <section
-      className="py-10 border-b border-black/15 dark:border-white/10 bg-[#090A0C] text-[#F4F4F0] overflow-hidden select-none"
+      className={`py-10 border-b overflow-hidden select-none transition-colors ${
+        isLight
+          ? 'bg-[#F9FAFB] border-[#E5E7EB] text-[#0A0A0E]'
+          : 'bg-[#090A0C] border-black/15 dark:border-white/10 text-[#F4F4F0]'
+      }`}
       aria-label="Studio Capabilities Kinetic Marquee"
     >
       <div className="space-y-4">
@@ -157,24 +165,46 @@ export const VelocityScrollMarquee: React.FC = () => {
           <div ref={track1Ref} className="flex items-center shrink-0 will-change-transform">
             {[...row1Items, ...row1Items].map((text, idx) => (
               <div key={idx} className="flex items-center">
-                <span className="text-2xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight px-6 text-[#F4F4F0]">
+                <span
+                  className={`text-2xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight px-6 ${
+                    isLight ? 'text-[#0A0A0E]' : 'text-[#F4F4F0]'
+                  }`}
+                >
                   {text}
                 </span>
-                <span className="w-3 h-3 bg-[#FACC15] inline-block shrink-0" />
+                <span
+                  className={`w-3 h-3 inline-block shrink-0 ${
+                    isLight ? 'bg-[#0A0A0E]' : 'bg-[#FACC15]'
+                  }`}
+                />
               </div>
             ))}
           </div>
         </div>
 
         {/* Row 2 (Counter-Scrolling Outline / Accent Style) */}
-        <div className="flex overflow-hidden whitespace-nowrap border-t border-white/10 pt-4">
+        <div
+          className={`flex overflow-hidden whitespace-nowrap border-t pt-4 ${
+            isLight ? 'border-[#E5E7EB]' : 'border-white/10'
+          }`}
+        >
           <div ref={track2Ref} className="flex items-center shrink-0 will-change-transform">
             {[...row2Items, ...row2Items].map((text, idx) => (
               <div key={idx} className="flex items-center">
-                <span className="text-xl sm:text-3xl lg:text-4xl font-mono-tabular font-semibold tracking-wider px-6 text-[#FACC15]">
+                <span
+                  className={`text-xl sm:text-3xl lg:text-4xl font-mono-tabular font-semibold tracking-wider px-6 ${
+                    isLight ? 'text-[#4B5563]' : 'text-[#FACC15]'
+                  }`}
+                >
                   {text}
                 </span>
-                <span className="text-white/30 px-2 font-mono-tabular">///</span>
+                <span
+                  className={`px-2 font-mono-tabular ${
+                    isLight ? 'text-[#9CA3AF]' : 'text-white/30'
+                  }`}
+                >
+                  ///
+                </span>
               </div>
             ))}
           </div>

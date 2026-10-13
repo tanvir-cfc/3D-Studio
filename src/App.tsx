@@ -15,6 +15,14 @@ import {
   Moon,
   Box,
   Layers,
+  Star,
+  Trophy,
+  Sparkles,
+  BookOpen,
+  Quote,
+  ShieldCheck,
+  Clock,
+  Send,
 } from 'lucide-react';
 import {
   PORTFOLIO_ITEMS,
@@ -23,6 +31,10 @@ import {
   FAQS,
   CLIENT_BRANDS,
   PortfolioItem,
+  AWARDS,
+  TESTIMONIALS,
+  INSIGHTS_ARTICLES,
+  STUDIO_METRICS,
 } from './data/studioData';
 import { BrandLogo } from './components/BrandLogo';
 import { RenderInspector } from './components/RenderInspector';
@@ -42,15 +54,23 @@ import {
   StickyStackingDeck,
   PinnedHorizontal3DStrip,
 } from './components/MusemindScrollEffects';
+import { HomeTwoMusemind } from './components/HomeTwoMusemind';
 
-export type PageId = 'home' | 'services' | 'models' | 'portfolio' | 'estimator' | 'contact';
+export type PageId =
+  | 'home'
+  | 'home2'
+  | 'services'
+  | 'models'
+  | 'portfolio'
+  | 'estimator'
+  | 'contact';
 
 export default function App() {
   // Default to Light theme ('light'), switchable to Dark ('dark')
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // Multi-Page Navigation State (Separate dedicated pages)
-  const [activePage, setActivePage] = useState<PageId>('home');
+  // Multi-Page Navigation State (Default to Home 2 Musemind Edition)
+  const [activePage, setActivePage] = useState<PageId>('home2');
 
   useEffect(() => {
     const root = document.documentElement;
@@ -159,8 +179,9 @@ export default function App() {
     setFormSubmitted(true);
   };
 
-  const NAV_ITEMS: { id: PageId; label: string }[] = [
-    { id: 'home', label: 'Home' },
+  const NAV_ITEMS: { id: PageId; label: string; badge?: string }[] = [
+    { id: 'home', label: 'Home 1' },
+    { id: 'home2', label: 'Home 2', badge: 'MUSEMIND' },
     { id: 'services', label: 'Services' },
     { id: 'models', label: '3D Studio' },
     { id: 'portfolio', label: 'Portfolio' },
@@ -169,17 +190,17 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F6F6F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-[#F4F4F0] flex flex-col transition-colors duration-150 relative">
+    <div className={`min-h-screen ${activePage === 'home2' ? 'bg-[#FFFFFF] text-[#0A0A0E]' : 'bg-[#F6F6F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-[#F4F4F0]'} flex flex-col transition-colors duration-150 relative`}>
       {/* Global Full-Viewport Scroll-Reactive Three.js 3D Spatial Environment */}
-      <Scroll3DBackground theme={theme} activePage={activePage} />
+      <Scroll3DBackground theme={activePage === 'home2' ? 'light' : theme} activePage={activePage} />
       {/* =====================================================================
           TOP BAR CONTRACT (Strict 1-Row, 3-Zone Contract, Zero Radius)
           Zone 1: Uploaded Brand Logo
-          Zone 2: 6 single-line page navigation links
-          Zone 3: 2 primary actions (Theme Switcher + Request Project Quote)
+          Zone 2: 7 single-line page navigation links (Home 1, Home 2 Musemind, etc.)
+          Zone 3: Primary action (Contact Us)
       ====================================================================== */}
-      <header className="sticky top-0 z-40 h-16 border-b border-black/15 dark:border-white/10 bg-[#F6F6F2]/95 dark:bg-[#090A0C]/95 backdrop-blur-md transition-colors duration-150">
-        <div className="max-w-[1280px] mx-auto h-full px-6 flex items-center justify-between gap-4">
+      <header className={`sticky top-0 z-40 h-16 border-b transition-colors duration-150 backdrop-blur-md ${activePage === 'home2' ? 'bg-white/95 border-[#E5E7EB] text-[#0A0A0E]' : 'border-black/15 dark:border-white/10 bg-[#F6F6F2]/95 dark:bg-[#090A0C]/95'}`}>
+        <div className="max-w-[1320px] mx-auto h-full px-6 flex items-center justify-between gap-4">
           {/* Zone 1: Brand Logo */}
           <button
             type="button"
@@ -191,21 +212,31 @@ export default function App() {
           </button>
 
           {/* Zone 2: Dedicated Multi-Page Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium">
+          <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium">
             {NAV_ITEMS.map((item) => {
               const isActive = activePage === item.id;
+              const isMusemind = item.id === 'home2';
               return (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => navigateToPage(item.id)}
-                  className={`py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+                  className={`py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 flex items-center gap-1.5 ${
                     isActive
-                      ? 'border-[#090A0C] dark:border-[#FACC15] text-[#090A0C] dark:text-[#F4F4F0] font-semibold'
+                      ? activePage === 'home2'
+                        ? 'border-[#0A0A0E] text-[#0A0A0E] font-bold'
+                        : 'border-[#090A0C] dark:border-[#FACC15] text-[#090A0C] dark:text-[#F4F4F0] font-semibold'
+                      : activePage === 'home2'
+                      ? 'border-transparent text-[#52525B] hover:text-[#0A0A0E]'
                       : 'border-transparent text-[#475569] dark:text-[#94A3B8] hover:text-[#090A0C] dark:hover:text-[#F4F4F0]'
                   }`}
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className="px-1.5 py-0.5 bg-[#D4FF00] text-[#0A0A0D] text-[9px] font-mono-tabular font-extrabold uppercase tracking-tight">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -216,7 +247,11 @@ export default function App() {
             <button
               type="button"
               onClick={() => navigateToPage('contact')}
-              className="py-2 px-4 text-xs sm:text-sm font-semibold bg-[#090A0C] hover:bg-[#1E293B] text-[#FACC15] dark:bg-[#FACC15] dark:hover:bg-[#EAB308] dark:text-[#090A0C] rounded-none transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className={`py-2 px-4 text-xs sm:text-sm font-semibold rounded-none transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                activePage === 'home2'
+                  ? 'bg-[#0A0A0E] hover:bg-[#27272A] text-white font-bold shadow-xs'
+                  : 'bg-[#090A0C] hover:bg-[#1E293B] text-[#FACC15] dark:bg-[#FACC15] dark:hover:bg-[#EAB308] dark:text-[#090A0C]'
+              }`}
             >
               Contact Us
             </button>
@@ -225,7 +260,11 @@ export default function App() {
       </header>
 
       {/* Mobile Secondary Page Switcher Bar (Visible only on small screens) */}
-      <div className="md:hidden flex items-center overflow-x-auto border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] px-4 py-2 gap-2">
+      <div className={`md:hidden flex items-center overflow-x-auto border-b px-4 py-2 gap-2 ${
+        activePage === 'home2'
+          ? 'bg-white border-[#E5E7EB]'
+          : 'border-black/15 dark:border-white/10 bg-white dark:bg-[#121418]'
+      }`}>
         {NAV_ITEMS.map((item) => {
           const isActive = activePage === item.id;
           return (
@@ -235,11 +274,16 @@ export default function App() {
               onClick={() => navigateToPage(item.id)}
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap shrink-0 cursor-pointer border ${
                 isActive
-                  ? 'bg-[#090A0C] text-[#FACC15] border-[#090A0C] dark:bg-[#FACC15] dark:text-[#090A0C]'
+                  ? activePage === 'home2'
+                    ? 'bg-[#0A0A0E] text-white border-[#0A0A0E] font-bold'
+                    : 'bg-[#090A0C] text-[#FACC15] border-[#090A0C] dark:bg-[#FACC15] dark:text-[#090A0C]'
+                  : activePage === 'home2'
+                  ? 'bg-[#F9FAFB] text-[#4B5563] border-[#E5E7EB] hover:text-[#0A0A0E]'
                   : 'bg-[#F6F6F2] dark:bg-[#090A0C] text-[#475569] dark:text-[#94A3B8] border-black/10 dark:border-white/10'
               }`}
             >
               {item.label}
+              {item.badge && <span className="ml-1 text-[9px] text-[#0A0A0E] bg-[#D4FF00] px-1 font-bold">[{item.badge}]</span>}
             </button>
           );
         })}
@@ -404,19 +448,251 @@ export default function App() {
               </Scroll3DSection>
             </section>
 
-            {/* MUSEMIND SCROLL 1: Velocity-Reactive Dual-Direction Kinetic Marquee */}
+            {/* 1. VELOCITY-REACTIVE KINETIC MARQUEE */}
             <VelocityScrollMarquee />
 
-            {/* MUSEMIND SCROLL 2: Sticky Stacking 3D Case Study Deck */}
+            {/* 2. AGENCY MANIFESTO & ABOUT STATEMENT ("Who We Are & What We Believe") */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-16">
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-2 text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>01 — WHO WE ARE & WHAT WE BELIEVE</span>
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-[1.1] max-w-4xl">
+                    We believe extraordinary 3D visualization is a competitive business engine, not
+                    just an aesthetic craft.
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start pt-6 border-t border-black/10 dark:border-white/10">
+                  <div className="lg:col-span-6 space-y-4 text-sm sm:text-base text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                    <p>
+                      Modern architecture, luxury horology, and high-performance hardware cannot
+                      rely on 2D blueprints or delay marketing campaigns six weeks waiting for
+                      physical prototypes. We bridge CAD engineering, cinematic light simulation, and
+                      real-time spatial computing.
+                    </p>
+                    <p>
+                      Every asset we deliver is crafted with clean quad topology and ACEScg color
+                      grading. Whether it’s securing a municipal permit on a $14M residential villa or
+                      boosting global pre-orders by 165%, we engineer visuals that convert audiences
+                      into investors and buyers.
+                    </p>
+                  </div>
+
+                  <div className="lg:col-span-6 space-y-4 text-sm sm:text-base text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                    <p>
+                      Our follow-the-sun production hubs in New York, Zurich, and Tokyo give enterprise
+                      teams 24-hour turnaround capability without sacrificing millimeter-level
+                      geometric fidelity.
+                    </p>
+                    <div className="pt-2 flex flex-wrap gap-4 text-xs font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
+                      <span className="px-3 py-1.5 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
+                        Sub-Millimeter CAD Conversion
+                      </span>
+                      <span className="px-3 py-1.5 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
+                        8K 32-Bit Linear Ray-Tracing
+                      </span>
+                      <span className="px-3 py-1.5 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
+                        Apple Vision Pro & WebXR Ready
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4 Studio Differentiator Metric Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
+                  {STUDIO_METRICS.map((metric, idx) => (
+                    <div
+                      key={metric.label}
+                      className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] space-y-2"
+                    >
+                      <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
+                        METRIC 0{idx + 1}
+                      </div>
+                      <div className="text-3xl lg:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] font-mono-tabular">
+                        {metric.number}
+                      </div>
+                      <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
+                        {metric.label}
+                      </div>
+                      <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                        {metric.detail}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 3. SELECTED WORK / STICKY STACKING 3D CASE STUDY DECK */}
             <StickyStackingDeck
               onSelectProject={(project) => setActiveLightboxProject(project)}
               onNavigatePortfolio={() => navigateToPage('portfolio')}
             />
 
-            {/* MUSEMIND SCROLL 3: Scroll-Driven 3D Exploded Choreography Showcase */}
+            {/* 4. CORE SERVICES & CAPABILITIES BENTO SHOWCASE */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>02 — CORE CAPABILITIES & SPECIALIZATIONS</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
+                      Comprehensive 3D Pipelines Built for Performance.
+                    </h2>
+                  </div>
+                  <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
+                    Four dedicated production disciplines covering CAD translation, architectural
+                    spatial rendering, broadcast-ready 60fps motion, and browser WebGL configurators.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {SERVICES.map((service, idx) => {
+                    const isWide = idx === 0 || idx === 3;
+                    return (
+                      <article
+                        key={service.id}
+                        className={`${
+                          isWide ? 'lg:col-span-7' : 'lg:col-span-5'
+                        } border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] overflow-hidden flex flex-col justify-between group hover:border-black/40 dark:hover:border-white/25 transition-colors`}
+                      >
+                        <div className="relative aspect-16/9 w-full overflow-hidden bg-[#0D0F12]">
+                          <img
+                            src={service.image}
+                            alt={service.title}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-xs text-[#E2E8F0]">
+                            <span className="font-mono-tabular text-[#FACC15] font-semibold">
+                              Lead Time: {service.leadTime}
+                            </span>
+                            <span className="text-[#CBD5E1] font-mono-tabular">
+                              {service.formats}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
+                          <div className="space-y-3">
+                            <h3 className="text-xl sm:text-2xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                              {service.title}
+                            </h3>
+                            <p className="text-xs font-medium text-[#1E293B] dark:text-[#E2E8F0]">
+                              {service.subtitle}
+                            </p>
+                            <p className="text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                              {service.description}
+                            </p>
+                          </div>
+
+                          <div className="pt-5 border-t border-black/10 dark:border-white/10 space-y-3">
+                            <div className="text-xs text-[#475569] dark:text-[#94A3B8]">
+                              <span className="text-[#090A0C] dark:text-[#F4F4F0] font-semibold">
+                                Deliverables:{' '}
+                              </span>
+                              <span>{service.deliverables}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 pt-1">
+                              <span className="text-xs text-[#B45309] dark:text-[#FACC15] font-medium">
+                                {service.outcomeStat}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormDiscipline(service.title);
+                                  navigateToPage('estimator');
+                                }}
+                                className="text-xs font-semibold text-[#090A0C] dark:text-[#F4F4F0] hover:text-[#B45309] dark:hover:text-[#FACC15] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors cursor-pointer"
+                              >
+                                <span>Calculate Service Cost</span>
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 5. LIVE SCROLL-DRIVEN 3D EXPLODED CHOREOGRAPHY STAGE */}
             <Scroll3DChoreography onOpenStudio={() => navigateToPage('models')} />
 
-            {/* MUSEMIND SCROLL 4: Pinned Vertical-to-Horizontal 3D Asset Reel */}
+            {/* 6. TRANSPARENT 4-STAGE PRODUCTION WORKFLOW ("How We Work") */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>03 — TRANSPARENT WORKFLOW & MILESTONES</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
+                      Four Auditable Gates. Zero Creative Drift.
+                    </h2>
+                  </div>
+                  <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
+                    Every project moves through structured revision gates with browser-based clay
+                    turntables and 32-bit look-development proofs before final rendering.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                  {PROCESS_STEPS.map((step, index) => {
+                    const isSelected = activeProcessIndex === index;
+                    return (
+                      <div
+                        key={step.number}
+                        onClick={() => setActiveProcessIndex(index)}
+                        className={`p-6 border transition-colors cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? 'bg-white dark:bg-[#181B22] border-[#090A0C] dark:border-[#FACC15] border-2 shadow-lg'
+                            : 'bg-[#F6F6F2] dark:bg-[#0D0F12] border-black/15 dark:border-white/10 hover:border-black/40 dark:hover:border-white/25'
+                        }`}
+                      >
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between text-xs font-mono-tabular">
+                            <span className="text-[#B45309] dark:text-[#FACC15] font-semibold">
+                              Stage {step.number} · {step.duration}
+                            </span>
+                            <span className="text-[#475569] dark:text-[#94A3B8]">{step.phase}</span>
+                          </div>
+
+                          <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                            {step.title}
+                          </h3>
+
+                          <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                            {step.summary}
+                          </p>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-black/10 dark:border-white/10 space-y-2">
+                          <div className="text-[11px] text-[#475569] dark:text-[#94A3B8] font-mono-tabular">
+                            {step.technicalDetails}
+                          </div>
+                          <div className="text-xs font-semibold text-[#090A0C] dark:text-[#E2E8F0]">
+                            Milestone: {step.clientMilestone}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 7. PINNED VERTICAL-TO-HORIZONTAL 3D ASSET REEL (10 Models) */}
             <PinnedHorizontal3DStrip
               onSelectModelInStudio={(presetId) => {
                 setSelectedStudioModel(presetId);
@@ -424,13 +700,13 @@ export default function App() {
               }}
             />
 
-            {/* Home Section 2: 8K Before/After Render Pass Inspector */}
+            {/* 8. 8K BEFORE / AFTER RENDER PASS INSPECTOR */}
             <section className="py-20 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
               <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                   <div>
-                    <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
-                      Sub-Millimeter LookDev & Ray-Tracing
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
+                      SUB-MILLIMETER LOOKDEV & RAY-TRACING
                     </div>
                     <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
                       Compare Subdivision Mesh vs. Final 8K Render.
@@ -458,25 +734,567 @@ export default function App() {
               </Scroll3DSection>
             </section>
 
-            {/* Home Section 3: Dedicated Page Directory & Vikram Kline Testimonial */}
-            <section className="py-20">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-16">
-                {/* Quick Navigation Cards to Dedicated Pages with 3D Spatial Tilt */}
+            {/* 9. WHY CHOOSE US / STUDIO DIFFERENTIATORS ("The Studio Advantage") */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>04 — WHY CHOOSE 3D MODELING COMPANY</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
+                      Engineered for Zero Creative Compromise.
+                    </h2>
+                  </div>
+                  <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
+                    How our technical infrastructure, NDA standards, and senior modeling leads
+                    outperform traditional agencies and freelance networks.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
+                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      PILLAR 01
+                    </span>
+                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Sub-Millimeter Geometric Accuracy
+                    </h3>
+                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      We model directly from raw STEP, IGES, Revit, and Rhino CAD files with zero
+                      dimensional drift, ensuring physical manufacturing tolerances are respected.
+                    </p>
+                  </div>
+
+                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
+                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      PILLAR 02
+                    </span>
+                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Dedicated 1,200-Core GPU Render Farm
+                    </h3>
+                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      Internal cloud compute handles 8K ray-traced sequences and multi-pass EXR
+                      compositing without third-party queue delays or production bottlenecks.
+                    </p>
+                  </div>
+
+                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
+                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      PILLAR 03
+                    </span>
+                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Strict Mutual NDA & Encrypted Storage
+                    </h3>
+                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      All blueprints and unreleased product CAD files remain air-gapped on encrypted
+                      storage. 100% of source files and intellectual property transfer to you upon completion.
+                    </p>
+                  </div>
+
+                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
+                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      PILLAR 04
+                    </span>
+                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Real-Time WebGL & Native Spatial USDZ
+                    </h3>
+                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      One master 3D dataset powers 8K print billboards, 60fps launch video, and
+                      lightweight interactive browser models ready for Apple Vision Pro.
+                    </p>
+                  </div>
+
+                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
+                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      PILLAR 05
+                    </span>
+                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Direct Senior LookDev Lead Access
+                    </h3>
+                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      No junior account managers translating feedback. You collaborate directly with
+                      the 3D artists, texture leads, and lighting directors building your scenes.
+                    </p>
+                  </div>
+
+                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
+                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      PILLAR 06
+                    </span>
+                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Fixed Transparent Milestone Pricing
+                    </h3>
+                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      Every project is scoped with guaranteed milestone gates, revision passes, and
+                      binding deliverable checklists. No open-ended billing or surprise fees.
+                    </p>
+                  </div>
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 10. AWARDS & INDUSTRY RECOGNITION */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
+                      <Trophy className="w-3.5 h-3.5" />
+                      <span>05 — INDUSTRY RECOGNITION & PEER AWARDS</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Honored for Technical & CGI Excellence.
+                    </h2>
+                  </div>
+                  <div className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
+                    16 GLOBAL INDUSTRY HONORS (2024–2026)
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {AWARDS.map((award) => (
+                    <div
+                      key={award.id}
+                      className="p-6 bg-white dark:bg-[#121418] border border-black/15 dark:border-white/10 flex flex-col justify-between space-y-4 hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono-tabular">
+                          <span className="px-2 py-0.5 bg-[#090A0C] text-[#FACC15] dark:bg-[#FACC15] dark:text-[#090A0C] font-bold">
+                            {award.year}
+                          </span>
+                          <span className="text-[#475569] dark:text-[#94A3B8]">
+                            {award.organization}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-snug">
+                          {award.title}
+                        </h3>
+                        <p className="text-xs text-[#475569] dark:text-[#94A3B8]">
+                          {award.category}
+                        </p>
+                      </div>
+
+                      <div className="pt-3 border-t border-black/10 dark:border-white/10 text-[10px] font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold tracking-wider">
+                        {award.badge}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 11. CLIENT STORIES & TESTIMONIALS ("What Our Partners Say") */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
+                      <Quote className="w-3.5 h-3.5" />
+                      <span>06 — VERIFIED CLIENT OUTCOMES & REVIEWS</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
+                      Trusted by Leaders Across 18 Countries.
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-mono-tabular px-3.5 py-2 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
+                    <div className="flex text-[#EAB308]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                      ))}
+                    </div>
+                    <span className="font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
+                      4.9 / 5.0 RATING
+                    </span>
+                    <span className="text-[#475569] dark:text-[#94A3B8]">· 64 CLUTCH REVIEWS</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {TESTIMONIALS.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-8 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] flex flex-col justify-between space-y-6"
+                    >
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="px-2 py-0.5 bg-[#090A0C] text-[#FACC15] dark:bg-[#FACC15] dark:text-[#090A0C] font-mono-tabular font-bold">
+                            {item.projectType}
+                          </span>
+                          <div className="flex text-[#EAB308]">
+                            {[...Array(item.rating)].map((_, i) => (
+                              <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                            ))}
+                          </div>
+                        </div>
+
+                        <blockquote className="text-sm text-[#090A0C] dark:text-[#F4F4F0] leading-relaxed">
+                          “{item.quote}”
+                        </blockquote>
+                      </div>
+
+                      <div className="pt-6 border-t border-black/10 dark:border-white/10 space-y-3">
+                        <div className="text-xs font-mono-tabular">
+                          <span className="text-[#B45309] dark:text-[#FACC15] font-semibold block">
+                            Commercial ROI:
+                          </span>
+                          <span className="text-[#090A0C] dark:text-[#F4F4F0] font-medium">
+                            {item.outcomeMetric}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-1">
+                          <div className="w-10 h-10 bg-[#090A0C] text-[#FACC15] flex items-center justify-center font-display font-bold text-sm shrink-0">
+                            {item.avatarInitials}
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
+                              {item.author}
+                            </div>
+                            <div className="text-xs text-[#475569] dark:text-[#94A3B8]">
+                              {item.role} · {item.company}
+                            </div>
+                            <div className="text-[11px] text-[#475569] dark:text-[#94A3B8]">
+                              {item.location}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 12. 3D INSIGHTS & ARTICLES ("Latest Thinking & Publications") */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>07 — 3D PUBLICATIONS & THOUGHT LEADERSHIP</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Insights on Spatial CGI & Real-Time Tech.
+                    </h2>
+                  </div>
+                  <span className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
+                    PEER-REVIEWED TECHNICAL PAPERS & ARTICLES
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {INSIGHTS_ARTICLES.map((article) => (
+                    <article
+                      key={article.id}
+                      className="p-7 bg-white dark:bg-[#121418] border border-black/15 dark:border-white/10 flex flex-col justify-between space-y-5 group hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
+                          <span className="text-[#B45309] dark:text-[#FACC15] font-semibold">
+                            {article.category}
+                          </span>
+                          <span>{article.readTime}</span>
+                        </div>
+
+                        <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] group-hover:text-[#B45309] dark:group-hover:text-[#FACC15] transition-colors leading-snug">
+                          {article.title}
+                        </h3>
+
+                        <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                          {article.excerpt}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t border-black/10 dark:border-white/10 space-y-3">
+                        <div className="flex flex-wrap gap-1.5">
+                          {article.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2 py-0.5 bg-[#F6F6F2] dark:bg-[#181B22] text-[10px] font-mono-tabular text-[#475569] dark:text-[#94A3B8]"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-between text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
+                          <span>By {article.author}</span>
+                          <span>{article.date}</span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 13. FREQUENTLY ASKED QUESTIONS (FAQ Accordion) */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                  <div className="lg:col-span-5 space-y-4">
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
+                      08 — FREQUENTLY ASKED QUESTIONS
+                    </div>
+                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Everything Answered Upfront.
+                    </h2>
+                    <p className="text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                      Questions regarding CAD ingestion, turnarounds, revision gates, source IP,
+                      and rendering resolutions. If you have unique requirements, our LookDev leads
+                      answer within 4 hours.
+                    </p>
+                    <div className="pt-4">
+                      <button
+                        type="button"
+                        onClick={() => navigateToPage('contact')}
+                        className="py-3 px-6 bg-[#090A0C] text-[#FACC15] dark:bg-[#FACC15] dark:text-[#090A0C] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
+                      >
+                        <span>Ask a Custom Technical Question</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-7 divide-y divide-black/15 dark:divide-white/10 border-t border-b border-black/15 dark:border-white/10">
+                    {FAQS.map((faq) => {
+                      const isOpen = openFaqId === faq.id;
+                      return (
+                        <div key={faq.id} className="py-5">
+                          <button
+                            type="button"
+                            onClick={() => setOpenFaqId(isOpen ? '' : faq.id)}
+                            className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group"
+                            aria-expanded={isOpen}
+                          >
+                            <div>
+                              <span className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8] block mb-1">
+                                {faq.category}
+                              </span>
+                              <span className="text-base font-display font-semibold text-[#090A0C] dark:text-[#F4F4F0] group-hover:text-[#B45309] dark:group-hover:text-[#FACC15] transition-colors">
+                                {faq.question}
+                              </span>
+                            </div>
+                            <span className="p-2 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] text-[#475569] dark:text-[#94A3B8] shrink-0">
+                              {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                            </span>
+                          </button>
+
+                          {isOpen && (
+                            <div className="mt-3 pr-10 text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
+                              {faq.answer}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 14. HIGH-IMPACT FINAL CALL TO ACTION ("Have a 3D Concept in Mind? Let's Talk") */}
+            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#090A0C] text-[#F4F4F0]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                  <div className="lg:col-span-6 space-y-6">
+                    <div className="inline-flex items-center gap-2 text-xs font-mono-tabular text-[#FACC15] font-semibold">
+                      <Send className="w-3.5 h-3.5" />
+                      <span>09 — START YOUR 3D COMMISSION</span>
+                    </div>
+
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white leading-[1.05]">
+                      Have a 3D Concept in Mind? Let’s Talk.
+                    </h2>
+
+                    <p className="text-base text-[#94A3B8] leading-relaxed max-w-xl">
+                      Whether you need an 8K architectural marketing suite, e-commerce watch turntables,
+                      or a real-time WebGL product configurator, our team provides a complimentary
+                      CAD geometry audit and guaranteed fixed proposal within 4 business hours.
+                    </p>
+
+                    <div className="pt-4 border-t border-white/15 space-y-3 text-xs font-mono-tabular">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-[#FACC15] shrink-0" />
+                        <span>Mutual Non-Disclosure Agreement (NDA) executed prior to file ingestion</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-[#FACC15] shrink-0" />
+                        <span>Guaranteed 4-hour technical proposal turnaround</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-[#FACC15] shrink-0" />
+                        <span>Direct collaboration with senior 3D LookDev leads</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-white/10 text-xs text-[#94A3B8] space-y-1">
+                      <div>Studio Headquarters: 123 Main Street, Suite 1400, New York, NY 10001</div>
+                      <div>Direct Producer Desk: studio@3dmodelingcompany.com · +1 (212) 555-0194</div>
+                      <div>Hubs: New York (EST) · Zurich (CET) · Tokyo (JST)</div>
+                    </div>
+                  </div>
+
+                  {/* Embedded Proposal Brief Form */}
+                  <div className="lg:col-span-6 bg-[#12151C] border border-white/15 p-6 sm:p-10 space-y-5">
+                    {formSubmitted ? (
+                      <div className="py-10 text-center space-y-4">
+                        <div className="w-14 h-14 bg-[#FACC15] text-[#090A0C] flex items-center justify-center mx-auto">
+                          <CheckCircle2 className="w-7 h-7" />
+                        </div>
+                        <h3 className="text-2xl font-display font-bold text-white">
+                          Project Brief Transferred to Production Desk
+                        </h3>
+                        <p className="text-sm text-[#94A3B8] max-w-md mx-auto">
+                          Thank you, {formName}. Adam Richter and our LookDev leads will audit your{' '}
+                          {formDiscipline} brief and respond to {formEmail} within 4 business hours.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setFormSubmitted(false)}
+                          className="py-2 px-4 text-xs bg-white/10 text-white hover:bg-white/20 transition-colors"
+                        >
+                          Submit Another Project Brief
+                        </button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleFormSubmit} className="space-y-4" noValidate>
+                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                          <h3 className="text-lg font-display font-bold text-white">
+                            Request Fixed-Scope Proposal
+                          </h3>
+                          <span className="text-xs text-[#94A3B8]">Mutual NDA Included</span>
+                        </div>
+
+                        {formError && (
+                          <div className="p-3 bg-red-950/80 border border-red-500/50 text-xs text-red-200">
+                            {formError}
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-xs text-[#CBD5E1]">Full Name *</label>
+                            <input
+                              type="text"
+                              value={formName}
+                              onChange={(e) => setFormName(e.target.value)}
+                              placeholder="e.g. Sarah Jenkins"
+                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-xs text-[#CBD5E1]">Work Email *</label>
+                            <input
+                              type="email"
+                              value={formEmail}
+                              onChange={(e) => setFormEmail(e.target.value)}
+                              placeholder="name@company.com"
+                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-xs text-[#CBD5E1]">Company / Studio</label>
+                            <input
+                              type="text"
+                              value={formCompany}
+                              onChange={(e) => setFormCompany(e.target.value)}
+                              placeholder="Firm name"
+                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-xs text-[#CBD5E1]">3D Discipline</label>
+                            <select
+                              value={formDiscipline}
+                              onChange={(e) => setFormDiscipline(e.target.value)}
+                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
+                            >
+                              <option>Architectural Visualization</option>
+                              <option>Luxury Product & Horology CGI</option>
+                              <option>60fps Exploded Technical Motion</option>
+                              <option>WebXR / Apple Vision USDZ Configurator</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-xs text-[#CBD5E1]">Estimated Budget Scope</label>
+                          <select
+                            value={formBudget}
+                            onChange={(e) => setFormBudget(e.target.value)}
+                            className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
+                          >
+                            <option>$1,500 – $3,000 (Single Hero Asset / Still)</option>
+                            <option>$3,000 – $7,500 (Multi-Angle Suite / Interior)</option>
+                            <option>$7,500 – $15,000 (Complete Campaign / 60fps Motion)</option>
+                            <option>$15,000+ (Enterprise Digital Twin / WebXR)</option>
+                          </select>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-xs text-[#CBD5E1]">Project Brief & File Formats *</label>
+                          <textarea
+                            rows={3}
+                            value={formMessage}
+                            onChange={(e) => setFormMessage(e.target.value)}
+                            placeholder="Tell us about your project, target deliverables (8K, video, WebGL), timeline, and whether you have CAD files ready..."
+                            className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none resize-none"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="w-full py-3 px-6 bg-[#FACC15] hover:bg-[#EAB308] text-[#090A0C] font-semibold text-xs transition-colors rounded-none flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <span>Submit Brief for Complimentary 4-Hour Proposal</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                </div>
+              </Scroll3DSection>
+            </section>
+
+            {/* 15. DEDICATED PAGE DIRECTORY CARDS (QUICK NAV) */}
+            <section className="py-20 bg-white dark:bg-[#0D0F12]">
+              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-10">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-black/15 dark:border-white/10">
+                  <div>
+                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-1">
+                      EXPLORE COMPLETE ARCHIVE
+                    </div>
+                    <h3 className="text-2xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
+                      Dedicated Specialized Studio Portals
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
+                    SEPARATE PAGES · INSTANT ACCESS
+                  </span>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <Tilt3DCard
                     onClick={() => navigateToPage('services')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
+                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
                     <div>
                       <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
                         01 / PAGE
                       </span>
-                      <h3 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        3D Services & 4-Step Pipeline
-                      </h3>
+                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
+                        3D Services & Pipeline
+                      </h4>
                       <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Detailed specifications on 3D modeling, architectural rendering, 60fps
-                        animations, and our 4-stage production workflow.
+                        Detailed specifications on modeling, rendering, animation, and AR workflows.
                       </p>
                     </div>
                     <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
@@ -487,18 +1305,17 @@ export default function App() {
 
                   <Tilt3DCard
                     onClick={() => navigateToPage('models')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
+                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
                     <div>
                       <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
                         02 / PAGE
                       </span>
-                      <h3 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        Interactive 3D Model Studio
-                      </h3>
+                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
+                        Interactive 3D Studio
+                      </h4>
                       <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Inspect real-time Three.js WebGL models in your browser—toggle quad
-                        wireframes, clay matcaps, and exploded mechanical views.
+                        10 live procedural WebGL models with PBR, clay matcaps, and exploded cutaways.
                       </p>
                     </div>
                     <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
@@ -509,18 +1326,17 @@ export default function App() {
 
                   <Tilt3DCard
                     onClick={() => navigateToPage('portfolio')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
+                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
                     <div>
                       <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
                         03 / PAGE
                       </span>
-                      <h3 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        8K Portfolio & Case Studies
-                      </h3>
+                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
+                        8K Portfolio Archive
+                      </h4>
                       <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Browse completed architectural, horology, automotive, and aerospace projects
-                        with verified commercial impact metrics.
+                        Case studies across architecture, horology, automotive, and aerospace.
                       </p>
                     </div>
                     <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
@@ -531,18 +1347,17 @@ export default function App() {
 
                   <Tilt3DCard
                     onClick={() => navigateToPage('estimator')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
+                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
                   >
                     <div>
                       <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
                         04 / PAGE
                       </span>
-                      <h3 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        Instant Cost Estimator & FAQ
-                      </h3>
+                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
+                        Instant Scope Estimator
+                      </h4>
                       <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Configure your project deliverables, polygon complexity, and output
-                        resolutions for an instant baseline quote.
+                        Configure geometric complexity, SKUs, and resolutions for instant pricing.
                       </p>
                     </div>
                     <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
@@ -551,75 +1366,26 @@ export default function App() {
                     </span>
                   </Tilt3DCard>
                 </div>
-
-                {/* Attributable Client Testimonial */}
-                <div className="border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] p-8 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                  <div className="lg:col-span-7 space-y-4">
-                    <div className="flex items-center gap-2 text-xs text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      <span>Verified Client Outcome</span>
-                      <span aria-hidden="true">·</span>
-                      <span>Luxury Product & E-Commerce Visualization</span>
-                    </div>
-                    <blockquote className="text-lg sm:text-xl font-display text-[#090A0C] dark:text-[#F4F4F0] leading-relaxed">
-                      “Working with the 3D Modeling Company was a game-changer. Before partnering
-                      with their studio, our physical jewelry and watch photography delayed campaign
-                      launches by six weeks. Their attention to micro-surface detail and
-                      photorealistic 3D renders helped us showcase our products across global retail
-                      channels and lifted pre-order conversions by 165%.”
-                    </blockquote>
-                    <div className="flex items-center gap-3 pt-2 text-xs">
-                      <div className="w-9 h-9 bg-[#090A0C] text-[#FACC15] flex items-center justify-center font-display font-bold">
-                        VK
-                      </div>
-                      <div>
-                        <div className="font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                          Vikram Kline
-                        </div>
-                        <div className="text-[#475569] dark:text-[#94A3B8]">
-                          Chief Executive Officer · Marketplace Luxury Group LLC
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-5 lg:border-l lg:border-black/15 dark:lg:border-white/10 lg:pl-8 space-y-4">
-                    <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Grow Your Business With Professional 3D Solutions:
-                    </div>
-                    <ul className="space-y-2.5 text-xs text-[#475569] dark:text-[#94A3B8]">
-                      <li className="flex items-start gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-[#B45309] dark:text-[#FACC15] shrink-0 mt-0.5" />
-                        <span>
-                          <strong className="text-[#090A0C] dark:text-[#F4F4F0]">
-                            Impress clients and investors instantly:
-                          </strong>{' '}
-                          Present unbuilt architecture and pre-tooled hardware in 8K clarity.
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-[#B45309] dark:text-[#FACC15] shrink-0 mt-0.5" />
-                        <span>
-                          <strong className="text-[#090A0C] dark:text-[#F4F4F0]">
-                            Save time and reduce design mistakes:
-                          </strong>{' '}
-                          Validate material combinations, lighting, and proportions digitally.
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-[#B45309] dark:text-[#FACC15] shrink-0 mt-0.5" />
-                        <span>
-                          <strong className="text-[#090A0C] dark:text-[#F4F4F0]">
-                            Market products with photorealistic visuals:
-                          </strong>{' '}
-                          Deploy one master 3D model across print billboards, 60fps video, and AR.
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
               </Scroll3DSection>
             </section>
           </div>
+        )}
+
+        {/* -------------------------------------------------------------------
+            PAGE: HOME 2 (MUSEMIND AGENCY EDITION)
+            Dedicated client-presentation page mirroring https://musemind.agency/
+            Complete with obsidian dark aesthetic, volt lime accents, live 3D showreel,
+            kinetic scroll, and full bespoke 3D studio copy.
+        -------------------------------------------------------------------- */}
+        {activePage === 'home2' && (
+          <HomeTwoMusemind
+            onNavigatePage={(page) => navigateToPage(page as PageId)}
+            onSelectProject={(project) => setActiveLightboxProject(project)}
+            onSelectModel={(preset) => {
+              setSelectedStudioModel(preset);
+              navigateToPage('models');
+            }}
+          />
         )}
 
         {/* -------------------------------------------------------------------
@@ -1413,9 +2179,15 @@ export default function App() {
       {/* =====================================================================
           QUIET EDITORIAL FOOTER WITH UPDATED BRAND LOGO & PAGE ROUTING
       ====================================================================== */}
-      <footer className="border-t border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#090A0C] py-16 text-xs text-[#475569] dark:text-[#94A3B8] transition-colors duration-150">
+      <footer className={`border-t py-16 text-xs transition-colors duration-150 ${
+        activePage === 'home2'
+          ? 'bg-[#FAFAFA] border-[#E5E7EB] text-[#52525B]'
+          : 'border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#090A0C] text-[#475569] dark:text-[#94A3B8]'
+      }`}>
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-black/15 dark:border-white/10">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b ${
+            activePage === 'home2' ? 'border-[#E5E7EB]' : 'border-black/15 dark:border-white/10'
+          }`}>
             {/* Brand Column */}
             <div className="lg:col-span-4 space-y-4">
               <button
