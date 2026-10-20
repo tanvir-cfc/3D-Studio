@@ -309,22 +309,8 @@ export default function App() {
             })}
           </nav>
 
-          {/* Zone 3: Primary Action CTA & Share Link */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsShareModalOpen(true)}
-              title="Share this page link with client"
-              className={`py-2 px-3 text-xs sm:text-sm font-semibold border flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs ${
-                activePage === 'home' || activePage === 'service-detail'
-                  ? 'bg-white hover:bg-[#F4F5F7] text-[#0A0A0E] border-[#E5E7EB]'
-                  : 'bg-white/10 hover:bg-white/20 text-[#090A0C] dark:text-[#F4F4F0] border-black/15 dark:border-white/15'
-              }`}
-            >
-              <Share2 className="w-3.5 h-3.5 text-[#0A0A0E] dark:text-[#D4FF00]" />
-              <span className="hidden sm:inline">Share Link</span>
-            </button>
-
+          {/* Zone 3: Primary Action CTA */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={() => navigateToPage('contact')}
