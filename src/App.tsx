@@ -23,6 +23,9 @@ import {
   ShieldCheck,
   Clock,
   Send,
+  Share2,
+  Check,
+  Link as LinkIcon,
 } from 'lucide-react';
 import {
   PORTFOLIO_ITEMS,
@@ -57,6 +60,13 @@ import {
 import { HomeTwoMusemind } from './components/HomeTwoMusemind';
 import { ServiceDetailPage } from './components/ServiceDetailPage';
 import { DETAILED_SERVICES, getServiceById } from './data/servicesData';
+import { SharePageModal } from './components/SharePageModal';
+import {
+  parseRoute,
+  syncRouteWithBrowser,
+  getFullShareableUrl,
+  getRouteHash,
+} from './utils/routes';
 
 export type PageId =
   | 'home'
@@ -71,8 +81,23 @@ export default function App() {
   // Default to Light theme ('light'), switchable to Dark ('dark')
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // Multi-Page Navigation State (Default to main Home)
-  const [activePage, setActivePage] = useState<PageId>('home');
+  // Initial Route parsed directly from URL (hash, pathname, or query parameters)
+  const initialRoute = parseRoute();
+  const [activePage, setActivePage] = useState<PageId>(initialRoute.page);
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(
+    initialRoute.serviceId || '3d-modeling'
+  );
+
+  // Share Dialog and Toast Feedback State
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3200);
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -83,18 +108,40 @@ export default function App() {
     }
   }, [theme]);
 
-  // Selected Service for Single Service Page
-  const [selectedServiceId, setSelectedServiceId] = useState<string>('3d-modeling');
+  // Synchronize route on initial mount and listen for browser back/forward or hash changes
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const currentRoute = parseRoute();
+      setActivePage(currentRoute.page);
+      if (currentRoute.serviceId) {
+        setSelectedServiceId(currentRoute.serviceId);
+      }
+      syncRouteWithBrowser(currentRoute.page, currentRoute.serviceId, true);
+    };
 
-  // Scroll to top when changing pages
+    // Ensure clean initial sync
+    syncRouteWithBrowser(initialRoute.page, initialRoute.serviceId, true);
+
+    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('popstate', handleUrlChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, []);
+
+  // Scroll to top and sync URL when changing pages
   const navigateToPage = (page: PageId) => {
     setActivePage(page);
+    syncRouteWithBrowser(page, undefined, false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToService = (serviceId: string) => {
     setSelectedServiceId(serviceId);
     setActivePage('service-detail');
+    syncRouteWithBrowser('service-detail', serviceId, false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -262,8 +309,22 @@ export default function App() {
             })}
           </nav>
 
-          {/* Zone 3: Primary Action CTA */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          {/* Zone 3: Primary Action CTA & Share Link */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsShareModalOpen(true)}
+              title="Share this page link with client"
+              className={`py-2 px-3 text-xs sm:text-sm font-semibold border flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs ${
+                activePage === 'home' || activePage === 'service-detail'
+                  ? 'bg-white hover:bg-[#F4F5F7] text-[#0A0A0E] border-[#E5E7EB]'
+                  : 'bg-white/10 hover:bg-white/20 text-[#090A0C] dark:text-[#F4F4F0] border-black/15 dark:border-white/15'
+              }`}
+            >
+              <Share2 className="w-3.5 h-3.5 text-[#0A0A0E] dark:text-[#D4FF00]" />
+              <span className="hidden sm:inline">Share Link</span>
+            </button>
+
             <button
               type="button"
               onClick={() => navigateToPage('contact')}
@@ -403,17 +464,34 @@ export default function App() {
                               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                             </span>
 
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setFormDiscipline(service.title);
-                                navigateToPage('estimator');
-                              }}
-                              className="text-[11px] font-semibold text-[#52525B] dark:text-[#94A3B8] hover:text-[#0A0A0E] dark:hover:text-[#FACC15] px-2 py-1 bg-[#F4F5F7] dark:bg-[#1E232B] transition-colors cursor-pointer"
-                            >
-                              Estimator
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const url = getFullShareableUrl('service-detail', service.id);
+                                  navigator.clipboard.writeText(url);
+                                  showToast(`Shareable link copied for ${service.title}!`);
+                                }}
+                                title="Copy direct link for client"
+                                className="text-[11px] font-semibold text-[#0A0A0E] dark:text-[#FACC15] hover:bg-[#D4FF00] hover:text-[#0A0A0E] dark:hover:bg-[#FACC15] dark:hover:text-[#0A0A0E] px-2 py-1 bg-[#F4F5F7] dark:bg-[#1E232B] border border-black/10 dark:border-white/10 transition-colors cursor-pointer flex items-center gap-1"
+                              >
+                                <Share2 className="w-3 h-3" />
+                                <span>Share</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setFormDiscipline(service.title);
+                                  navigateToPage('estimator');
+                                }}
+                                className="text-[11px] font-semibold text-[#52525B] dark:text-[#94A3B8] hover:text-[#0A0A0E] dark:hover:text-[#FACC15] px-2 py-1 bg-[#F4F5F7] dark:bg-[#1E232B] transition-colors cursor-pointer"
+                              >
+                                Estimator
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1164,7 +1242,7 @@ export default function App() {
                 <li>
                   <button
                     type="button"
-                    onClick={() => navigateToPage('services')}
+                    onClick={() => navigateToService('3d-modeling')}
                     className="hover:text-[#090A0C] dark:hover:text-[#F4F4F0] transition-colors cursor-pointer"
                   >
                     Precision CAD & Subdivision Modeling
@@ -1173,7 +1251,16 @@ export default function App() {
                 <li>
                   <button
                     type="button"
-                    onClick={() => navigateToPage('services')}
+                    onClick={() => navigateToService('photorealistic-rendering')}
+                    className="hover:text-[#090A0C] dark:hover:text-[#F4F4F0] transition-colors cursor-pointer"
+                  >
+                    Photorealistic Ray-Traced LookDev & CGI
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => navigateToService('archviz-digital-twins')}
                     className="hover:text-[#090A0C] dark:hover:text-[#F4F4F0] transition-colors cursor-pointer"
                   >
                     Architectural Exterior & Interior CGI
@@ -1191,7 +1278,7 @@ export default function App() {
                 <li>
                   <button
                     type="button"
-                    onClick={() => navigateToPage('services')}
+                    onClick={() => navigateToService('animation-walkthroughs')}
                     className="hover:text-[#090A0C] dark:hover:text-[#F4F4F0] transition-colors cursor-pointer"
                   >
                     60fps Technical & Exploded Animation
@@ -1200,7 +1287,7 @@ export default function App() {
                 <li>
                   <button
                     type="button"
-                    onClick={() => navigateToPage('services')}
+                    onClick={() => navigateToService('ar-vr-visualization')}
                     className="hover:text-[#090A0C] dark:hover:text-[#F4F4F0] transition-colors cursor-pointer"
                   >
                     WebGL, glTF 2.0 & Apple Vision USDZ
@@ -1280,6 +1367,25 @@ export default function App() {
         onClose={() => setActiveLightboxProject(null)}
         onRequestSimilarProject={handleCommissionSimilar}
       />
+
+      {/* Share Page Link with Client Modal */}
+      <SharePageModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        activePage={activePage}
+        selectedServiceId={selectedServiceId}
+      />
+
+      {/* Floating Quick Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0A0A0E] text-white px-5 py-3 border border-[#D4FF00] shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-150 max-w-[90vw]">
+          <CheckCircle2 className="w-4 h-4 text-[#D4FF00] shrink-0" />
+          <div className="text-xs font-mono-tabular truncate">
+            <span className="font-bold text-[#D4FF00]">Link Ready:</span>{' '}
+            <span className="text-[#E2E8F0]">{toastMessage}</span>
+          </div>
+        </div>
+      )}
 
       {/* Minimal, Unobtrusive Bottom-Right Theme Toggle (Zero Radius) */}
       <button

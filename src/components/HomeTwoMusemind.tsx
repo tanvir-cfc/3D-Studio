@@ -19,6 +19,7 @@ import {
   Layers,
   Activity,
   Box,
+  Share2,
 } from 'lucide-react';
 import {
   MUSEMIND_SERVICES,
@@ -30,6 +31,7 @@ import { Scroll3DSection } from './Scroll3DReveal';
 import { WeAre3DEffect } from './WeAre3DEffect';
 import { BrandLogosMarquee } from './BrandLogosMarquee';
 import { HeroGlassVideo } from './HeroGlassVideo';
+import { getFullShareableUrl } from '../utils/routes';
 
 interface HomeTwoMusemindProps {
   onNavigatePage: (page: string) => void;
@@ -46,6 +48,17 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
   const [selectedCaseStudy, setSelectedCaseStudy] = useState<string | null>(null);
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
   const [boonActiveTab, setBoonActiveTab] = useState<'exploded' | 'wireframe' | 'turntable'>('exploded');
+  const [copiedServiceId, setCopiedServiceId] = useState<string | null>(null);
+
+  const handleCopyServiceLink = (e: React.MouseEvent, serviceId: string) => {
+    e.stopPropagation();
+    const url = getFullShareableUrl('service-detail', serviceId);
+    navigator.clipboard.writeText(url);
+    setCopiedServiceId(serviceId);
+    setTimeout(() => {
+      setCopiedServiceId(null);
+    }, 2500);
+  };
 
   // 3D Commission inquiry form state
   const [formName, setFormName] = useState('');
@@ -725,10 +738,31 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                   </div>
 
                   <div className="pt-6 border-t border-[#E5E7EB] flex items-center justify-between text-xs font-mono-tabular">
-                    <span className="text-[#6B7280] group-hover:text-[#0A0A0E] font-semibold">View Single Service Page</span>
-                    <span className="p-2 bg-white group-hover:bg-[#0A0A0E] text-[#0A0A0E] group-hover:text-white transition-colors">
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#6B7280] group-hover:text-[#0A0A0E] font-semibold">View Service Page</span>
+                      <span className="p-1.5 bg-white group-hover:bg-[#0A0A0E] text-[#0A0A0E] group-hover:text-white transition-colors">
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => handleCopyServiceLink(e, targetServiceId)}
+                      title="Copy shareable link for client"
+                      className="px-2.5 py-1 bg-white hover:bg-[#D4FF00] text-[#0A0A0E] border border-[#E5E7EB] font-bold text-[11px] inline-flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                    >
+                      {copiedServiceId === targetServiceId ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          <span>Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="w-3 h-3 text-[#6B7280]" />
+                          <span>Share</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               );
@@ -1220,6 +1254,17 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Toast Notification when Client Link is copied from capabilities */}
+      {copiedServiceId && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0A0A0E] text-white px-5 py-3 border border-[#D4FF00] shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-150">
+          <CheckCircle2 className="w-4 h-4 text-[#D4FF00] shrink-0" />
+          <div className="text-xs font-mono-tabular">
+            <span className="font-bold text-[#D4FF00]">Link Copied:</span>{' '}
+            <span className="text-[#E2E8F0] select-all">{getFullShareableUrl('service-detail', copiedServiceId)}</span>
           </div>
         </div>
       )}

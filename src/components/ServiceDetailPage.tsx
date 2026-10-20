@@ -18,9 +18,12 @@ import {
   Box,
   Eye,
   Star,
+  Share2,
+  Link as LinkIcon,
 } from 'lucide-react';
 import { ServiceDetailItem, DETAILED_SERVICES } from '../data/servicesData';
 import { Scroll3DSection } from './Scroll3DReveal';
+import { getFullShareableUrl } from '../utils/routes';
 
 interface ServiceDetailPageProps {
   service: ServiceDetailItem;
@@ -39,6 +42,14 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
   const [selectedPricingTier, setSelectedPricingTier] = useState<string>(service.pricingOptions[1]?.tier || '');
   const [activeViewMode, setActiveViewMode] = useState<'beauty' | 'wireframe' | 'clay'>('beauty');
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
+
+  const handleCopyLink = () => {
+    const fullUrl = getFullShareableUrl('service-detail', service.id);
+    navigator.clipboard.writeText(fullUrl);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2800);
+  };
 
   // Quick commission form within the single service page
   const [formName, setFormName] = useState('');
@@ -100,14 +111,28 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-bold text-xs transition-all cursor-pointer shadow-2xs border ${
+                copiedLink
+                  ? 'bg-[#10B981] text-white border-emerald-600'
+                  : 'bg-[#D4FF00] hover:bg-[#cbf500] text-[#0A0A0E] border-black/30'
+              }`}
+              title="Copy shareable link for client"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+              <span>{copiedLink ? 'Link Copied!' : 'Share to Client'}</span>
+            </button>
+
             <button
               type="button"
               onClick={() => onNavigatePage('services')}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#E5E7EB] text-[#0A0A0E] font-bold hover:bg-[#0A0A0E] hover:text-white transition-colors cursor-pointer shadow-2xs"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>All Services</span>
+              <span className="hidden sm:inline">All Services</span>
             </button>
 
             <button
@@ -173,6 +198,20 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
                   <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
                 </button>
 
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className={`py-3.5 px-5 font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-all cursor-pointer border shadow-2xs ${
+                    copiedLink
+                      ? 'bg-[#10B981] text-white border-emerald-600'
+                      : 'bg-[#D4FF00] hover:bg-[#cbf500] text-[#0A0A0E] border-black/30'
+                  }`}
+                  title="Copy direct shareable link for client"
+                >
+                  {copiedLink ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                  <span>{copiedLink ? 'Link Copied!' : 'Share Link With Client'}</span>
+                </button>
+
                 <a
                   href="#pricing-section"
                   className="py-3.5 px-5 bg-white hover:bg-[#F4F5F7] text-[#0A0A0E] border border-[#E5E7EB] font-bold text-xs inline-flex items-center gap-2 transition-colors cursor-pointer shadow-2xs"
@@ -188,6 +227,21 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
                 >
                   {copiedEmail ? <Check className="w-4 h-4 text-[#10B981]" /> : <Copy className="w-4 h-4" />}
                   <span>{copiedEmail ? 'Email Copied!' : 'Copy Studio Email'}</span>
+                </button>
+              </div>
+
+              {/* Shareable Link Indicator Box for Clients */}
+              <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono-tabular">
+                <span className="text-[#6B7280] font-bold">CLIENT SHARE LINK:</span>
+                <span className="px-2.5 py-1 bg-[#F4F5F7] border border-[#E5E7EB] text-[#0A0A0E] font-medium select-all">
+                  {getFullShareableUrl('service-detail', service.id)}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="text-xs text-[#0A0A0E] font-bold underline hover:no-underline cursor-pointer"
+                >
+                  {copiedLink ? 'Copied!' : 'Copy'}
                 </button>
               </div>
             </div>
@@ -832,6 +886,17 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Floating Toast Notification when Client Link is copied */}
+      {copiedLink && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0A0A0E] text-white px-5 py-3 border border-[#D4FF00] shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-150">
+          <CheckCircle2 className="w-4 h-4 text-[#D4FF00] shrink-0" />
+          <div className="text-xs font-mono-tabular">
+            <span className="font-bold text-[#D4FF00]">Link Copied:</span>{' '}
+            <span className="text-[#E2E8F0] select-all">{getFullShareableUrl('service-detail', service.id)}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
