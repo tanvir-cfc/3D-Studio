@@ -76,7 +76,7 @@ export const HeroGlassVideo: React.FC = () => {
       <div className="absolute -inset-1.5 bg-gradient-to-r from-[#D4FF00]/25 via-emerald-400/20 to-sky-400/25 blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       {/* Main Glassmorphic Panel (Musemind Clean White Glass Effect) */}
-      <div className="relative backdrop-blur-2xl bg-white/75 border border-white/90 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-3 sm:p-4.5 overflow-hidden transition-all duration-300">
+      <div className="relative backdrop-blur-2xl bg-white/80 border border-white/90 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-3 sm:p-4.5 overflow-hidden transition-all duration-300">
         {/* Glass Specular Top Highlight */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none" />
 
@@ -85,14 +85,14 @@ export const HeroGlassVideo: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 bg-[#D4FF00] border border-black/40 shadow-xs" />
             <span className="font-extrabold text-[#0A0A0E] tracking-wider text-[11px] sm:text-xs">
-              MUSEMIND REEL · 4K 60FPS
+              3D STUDIO REEL · 4K 60FPS CGI & REAL-TIME
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#F4F5F7] border border-[#E5E7EB] text-[10px] font-bold text-[#0A0A0E]">
               <Sparkles className="w-3 h-3 text-[#0A0A0E]" />
-              INTERACTIVE GLASS
+              OCTANE · UNREAL 5
             </span>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const HeroGlassVideo: React.FC = () => {
           onClick={togglePlay}
           className="relative aspect-4/3 w-full bg-[#0E0E12] overflow-hidden mt-3 shadow-inner cursor-pointer"
         >
-          {/* Real High-Definition Product Design & Digital UI Showreel Video */}
+          {/* Real High-Definition 3D CGI Showreel Video */}
           <video
             ref={videoRef}
             autoPlay
@@ -110,9 +110,8 @@ export const HeroGlassVideo: React.FC = () => {
             muted={isMuted}
             playsInline
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-            poster="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
+            poster="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"
           >
-            {/* Multiple robust CDN video sources */}
             <source
               src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
               type="video/mp4"
@@ -136,15 +135,20 @@ export const HeroGlassVideo: React.FC = () => {
           )}
 
           {/* Top Floating Glass Badge */}
-          <div className="absolute top-3 left-3 px-2.5 py-1 bg-black/40 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono-tabular font-bold flex items-center gap-1.5">
+          <div className="absolute top-3 left-3 px-2.5 py-1 bg-black/50 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono-tabular font-bold flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4FF00] animate-pulse" />
-            <span>PRODUCT DESIGN IN ACTION</span>
+            <span>RAY-TRACED 3D ASSETS IN ACTION</span>
+          </div>
+
+          {/* Top Right Polycount Tag */}
+          <div className="absolute top-3 right-3 px-2 py-0.5 bg-[#D4FF00] text-[#0A0A0E] text-[10px] font-mono-tabular font-bold shadow-sm">
+            8K PBR · SUB-D SURFACE
           </div>
 
           {/* Bottom Floating Frosted Glass Control Bar */}
           <div
             onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-3 left-3 right-3 p-2.5 bg-black/55 backdrop-blur-xl border border-white/25 text-white text-xs flex flex-col gap-2"
+            className="absolute bottom-3 left-3 right-3 p-2.5 bg-black/60 backdrop-blur-xl border border-white/25 text-white text-xs flex flex-col gap-2"
           >
             {/* Scrub Progress Bar */}
             <div className="w-full bg-white/20 h-1 overflow-hidden">
@@ -189,7 +193,7 @@ export const HeroGlassVideo: React.FC = () => {
 
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-mono-tabular text-[#D4FF00] font-bold">
-                  MUSEMIND STUDIO
+                  3D MODELING STUDIO
                 </span>
                 <button
                   type="button"
@@ -204,19 +208,19 @@ export const HeroGlassVideo: React.FC = () => {
           </div>
         </div>
 
-        {/* Floating Glass Metric Footer Card (Musemind Signature) */}
+        {/* Floating Glass Metric Footer Card */}
         <div className="mt-3 p-3 bg-[#F9FAFB]/90 backdrop-blur-md border border-[#E5E7EB] flex items-center justify-between text-xs font-mono-tabular">
           <div className="space-y-0.5">
-            <span className="text-[10px] text-[#6B7280] block font-bold">CLIENT SATISFACTION</span>
+            <span className="text-[10px] text-[#6B7280] block font-bold">GEOMETRY ACCURACY</span>
             <div className="flex items-center gap-1.5 font-bold text-[#0A0A0E] text-sm font-display">
               <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-              <span>98.6% Retained</span>
+              <span>100% Quad Clean Topology</span>
             </div>
           </div>
           <div className="text-right space-y-0.5">
-            <span className="text-[10px] text-[#6B7280] block font-bold">PROJECTS SHIPPED</span>
+            <span className="text-[10px] text-[#6B7280] block font-bold">PRODUCTION 3D ASSETS</span>
             <span className="text-sm font-display font-extrabold text-[#0A0A0E]">
-              350+ Worldwide
+              12,000+ Shipped
             </span>
           </div>
         </div>

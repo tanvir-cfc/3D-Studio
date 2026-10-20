@@ -11,18 +11,14 @@ import {
   Send,
   Copy,
   Check,
-  Layout,
-  Smartphone,
-  Layers,
-  Search,
   Compass,
   Cpu,
   TrendingUp,
   X,
   ExternalLink,
-  Shield,
+  Layers,
   Activity,
-  Code2,
+  Box,
 } from 'lucide-react';
 import {
   MUSEMIND_SERVICES,
@@ -37,30 +33,32 @@ import { HeroGlassVideo } from './HeroGlassVideo';
 
 interface HomeTwoMusemindProps {
   onNavigatePage: (page: string) => void;
+  onSelectService?: (serviceId: string) => void;
   onSelectProject?: (project: any) => void;
   onSelectModel?: (presetId: any) => void;
 }
 
 export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
   onNavigatePage,
+  onSelectService,
 }) => {
   const [activeFaq, setActiveFaq] = useState<string>('faq-1');
   const [selectedCaseStudy, setSelectedCaseStudy] = useState<string | null>(null);
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
-  const [boonActiveTab, setBoonActiveTab] = useState<'dashboard' | 'referrals' | 'analytics'>('dashboard');
+  const [boonActiveTab, setBoonActiveTab] = useState<'exploded' | 'wireframe' | 'turntable'>('exploded');
 
-  // Proposal inquiry form state
+  // 3D Commission inquiry form state
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formCompany, setFormCompany] = useState('');
-  const [formService, setFormService] = useState('UI/UX Product Design (SaaS & Web)');
-  const [formBudget, setFormBudget] = useState('$10,000 – $25,000');
+  const [formService, setFormService] = useState('Hard-Surface & Industrial CAD Modeling');
+  const [formBudget, setFormBudget] = useState('$7,500 – $15,000 (Multi-Angle Product Suite + Turntable Animation)');
   const [formMessage, setFormMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formError, setFormError] = useState('');
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('hello@musemind.agency');
+    navigator.clipboard.writeText('studio@3dmodelingcompany.com');
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2400);
   };
@@ -68,7 +66,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formEmail.trim() || !formMessage.trim()) {
-      setFormError('Please fill in your name, work email, and project scope.');
+      setFormError('Please fill in your name, work email, and 3D project requirements.');
       return;
     }
     setFormError('');
@@ -79,56 +77,47 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
     <div className="bg-[#FFFFFF] text-[#0A0A0E] selection:bg-[#D4FF00] selection:text-[#0A0A0E] transition-colors duration-150">
       {/* =====================================================================
           1. TOP HERO SECTION:
-          Left: Monumental Musemind Headline & Direct CTAs
-          Right: Frosted Glass Effect Video Showreel Player (HeroGlassVideo)
+          Left: Monumental 3D Studio Headline & Direct CTAs
+          Right: Frosted Glass Effect 3D Showreel Video Player (HeroGlassVideo)
       ====================================================================== */}
       <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-[#E5E7EB] bg-white overflow-hidden">
         {/* Subtle ambient light glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[380px] bg-[#D4FF00]/12 blur-[140px] pointer-events-none rounded-none" />
 
-        <div className="max-w-[1320px] mx-auto px-6 relative z-10 space-y-12">
-          {/* Top Status & Accreditation Badges */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-[#F4F5F7] border border-[#E5E7EB] text-xs font-mono-tabular shadow-2xs">
+        <div className="max-w-[1320px] mx-auto px-6 relative z-10 space-y-8 lg:space-y-10">
+          {/* Top Status & Accreditation Badge */}
+          <div className="flex items-center gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F4F5F7] border border-[#E5E7EB] text-xs font-mono-tabular">
               <span className="w-2 h-2 bg-[#10B981] animate-pulse inline-block" />
-              <span className="text-[#0A0A0E] font-bold">DIGITAL PRODUCT DESIGN & CONSULTING AGENCY</span>
+              <span className="text-[#0A0A0E] font-bold">3D MODELING & CGI STUDIO</span>
               <span className="text-[#D1D5DB]">/</span>
-              <span className="text-[#4B5563]">NEW YORK · LONDON · GLOBAL HUB</span>
+              <span className="text-[#52525B]">GLOBAL PIPELINE</span>
             </div>
-
-            <div className="flex items-center gap-3 text-xs font-mono-tabular text-[#4B5563]">
-              <div className="flex text-[#F59E0B]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                ))}
-              </div>
-              <span className="text-[#0A0A0E] font-bold">4.9/5 RATED ON CLUTCH</span>
-              <span className="text-[#D1D5DB]">·</span>
-              <span className="font-medium">TOP 1% GLOBAL STUDIO</span>
+            <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono-tabular text-[#6B7280]">
+              <span className="text-[#0A0A0E] font-bold">4.9/5 RATED</span>
+              <span>· TOP 1% STUDIO</span>
             </div>
           </div>
 
           {/* Hero Grid: Left Content + Right Floating Glass Effect Video */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            {/* Left Hero Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            {/* Left Hero Content (Reduced Text, High Punch) */}
             <div className="lg:col-span-7 space-y-6">
               <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-extrabold tracking-tight text-[#0A0A0E] leading-[0.98]">
-                Transforming Ideas into <span className="bg-[#D4FF00] px-2.5 py-0.5 inline-block text-[#0A0A0E]">Digital Products</span> That Drive Real Growth.
+                Concepts into <span className="bg-[#D4FF00] px-2.5 py-0.5 inline-block text-[#0A0A0E]">Hyper-Real 3D.</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-[#52525B] leading-relaxed max-w-2xl">
-                We partner with ambitious startups and global enterprises to craft intuitive
-                UI/UX, scalable design systems, and digital experiences that captivate users and
-                boost revenue.
+              <p className="text-base sm:text-lg text-[#52525B] leading-relaxed max-w-xl">
+                Production-ready 3D modeling, photorealistic CGI renders, and real-time WebGL assets for visionary brands.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={() => onNavigatePage('contact')}
                   className="py-3.5 px-6 bg-[#0A0A0E] hover:bg-[#27272A] text-white font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-colors cursor-pointer shadow-md hover:shadow-lg"
                 >
-                  <span>Start a Project</span>
+                  <span>Start a 3D Project</span>
                   <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
                 </button>
                 <a
@@ -136,7 +125,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                   className="py-3.5 px-5 bg-white hover:bg-[#F4F5F7] text-[#0A0A0E] border border-[#E5E7EB] font-bold text-xs inline-flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
                 >
                   <Eye className="w-4 h-4 text-[#0A0A0E]" />
-                  <span>Explore Selected Work</span>
+                  <span>View Selected Work</span>
                 </a>
               </div>
             </div>
@@ -158,11 +147,11 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
             <div className="flex items-center gap-3">
               <span className="w-2 h-2 bg-[#D4FF00] border border-black/30" />
               <h2 className="text-sm sm:text-base font-mono-tabular font-extrabold tracking-wider uppercase text-[#0A0A0E]">
-                Trusted By 350+ Global Brands
+                Trusted By 350+ Global Brands & Entertainment Studios
               </h2>
             </div>
             <span className="text-xs font-mono-tabular text-[#6B7280]">
-              SILICON VALLEY · EUROPE · MIDDLE EAST · ASIA PACIFIC
+              GAMING · AUTOMOTIVE · CONSUMER TECH · INDUSTRIAL HARDWARE · AEROSPACE
             </span>
           </div>
 
@@ -180,66 +169,65 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
           <div className="text-center max-w-4xl mx-auto space-y-5">
             <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-3 py-1 bg-[#F4F5F7] border border-[#E5E7EB] text-[#0A0A0E] font-bold tracking-wider">
               <Compass className="w-3.5 h-3.5 text-[#0A0A0E]" />
-              <span>END-TO-END PRODUCT PARTNERSHIP</span>
+              <span>END-TO-END 3D PIPELINE PARTNERSHIP</span>
             </div>
 
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-[#0A0A0E] leading-tight">
-              One Partner. From Strategy to Scale.
+              One 3D Studio. From Concept Sculpt to Real-Time Scale.
             </h2>
 
             <p className="text-base sm:text-lg text-[#52525B] leading-relaxed max-w-2xl mx-auto">
-              We bring strategy, research, design, and development together to solve business
-              problems and help validate ideas, improve existing products, and build scalable digital technology.
+              We bring digital sculpting, precision CAD hard-surface modeling, PBR look-development, and real-time optimization together to engineer production-ready 3D assets for games, commercials, e-commerce, and the industrial metaverse.
             </p>
           </div>
 
           {/* 4 Foundation Pillars under Strategy to Scale */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="p-6 bg-[#F9FAFB] border border-[#E5E7EB] space-y-3 hover:border-[#0A0A0E] transition-colors shadow-2xs">
-              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">01 / STRATEGY</div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Validate & Blueprint</h3>
+              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">01 / CONCEPT & SCULPT</div>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Anatomy & Hard-Surface</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Market benchmarking, persona mapping, and value proposition definition to build what users actually want.
+                ZBrush digital sculpting, industrial CAD conversion, concept art translation, and sub-d topology blueprinting.
               </p>
             </div>
 
             <div className="p-6 bg-[#F9FAFB] border border-[#E5E7EB] space-y-3 hover:border-[#0A0A0E] transition-colors shadow-2xs">
-              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">02 / EXPERIENCE</div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Human-Centered UX</h3>
+              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">02 / TEXTURING & LOOKDEV</div>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Physically-Based Rendering</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Cognitive flow optimization, wireframing, and interactive prototypes that turn complex software into joy.
+                8K photorealistic material generation, ray-traced subsurface scattering, and custom procedural shaders in Substance 3D.
               </p>
             </div>
 
             <div className="p-6 bg-[#F9FAFB] border border-[#E5E7EB] space-y-3 hover:border-[#0A0A0E] transition-colors shadow-2xs">
-              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">03 / TECHNOLOGY</div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Tokenized Systems</h3>
+              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">03 / RIGGING & ANIMATION</div>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Kinematic Dynamics</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Figma variables, design tokens, and clean developer handoff so engineers ship at 3x velocity.
+                Production-ready skeleton rigs, micro-mechanical joint constraints, photoreal product exploded views, and turntable motion.
               </p>
             </div>
 
             <div className="p-6 bg-[#F9FAFB] border border-[#E5E7EB] space-y-3 hover:border-[#0A0A0E] transition-colors shadow-2xs">
-              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">04 / SCALE</div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Continuous Growth</h3>
+              <div className="text-xs font-mono-tabular text-[#0A0A0E] font-bold">04 / REAL-TIME SCALE</div>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Sub-50ms WebGL & Engine</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Conversion audits, A/B testing variations, and feature expansions to scale ARR and enterprise retention.
+                LOD generation, GLTF/USDZ mesh compression, polygon decimation, and instant browser rendering for 3D web configurators.
               </p>
             </div>
           </div>
 
-          {/* Dashboard Image with 3D Perspective Scroll-Expand Effect (Musemind Signature) */}
+          {/* 3D Viewport Inspector with 3D Perspective Scroll-Expand Effect */}
           <div className="pt-8">
             <div className="border-t border-[#E5E7EB] pt-12 text-center space-y-3 pb-6">
               <span className="text-xs font-mono-tabular text-[#6B7280] uppercase tracking-wider font-bold">
-                SCROLL-REACTIVE PRODUCT SHOWCASE · 3D PERSPECTIVE ZOOM
+                SCROLL-REACTIVE 3D ASSET INSPECTOR · 3D PERSPECTIVE ZOOM
               </span>
             </div>
 
             <ScrollExpand3DContainer>
               <div className="border border-[#E5E7EB] bg-[#F4F5F7] p-4 sm:p-8 shadow-2xl overflow-hidden">
                 <div className="bg-white border border-[#E5E7EB] shadow-lg overflow-hidden">
-                  {/* Dashboard Header Bar */}
+                  {/* Viewport Header Bar */}
                   <div className="px-5 py-3.5 bg-[#F9FAFB] border-b border-[#E5E7EB] flex items-center justify-between text-xs font-mono-tabular">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-1.5">
@@ -247,46 +235,46 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
                       </div>
-                      <span className="font-bold text-[#0A0A0E]">MUSEMIND ENTERPRISE SAAS SYSTEM · V4.2</span>
+                      <span className="font-bold text-[#0A0A0E]">STUDIO VIEWPORT ENGINE · 3D REAL-TIME INSPECTOR V4.2</span>
                     </div>
                     <div className="flex items-center gap-3 text-[#6B7280]">
-                      <span className="hidden sm:inline">LIVE TELEMETRY</span>
+                      <span className="hidden sm:inline">RAYTRACING ACCELERATED</span>
                       <span className="px-2 py-0.5 bg-[#D4FF00] text-[#0A0A0E] font-bold">ACTIVE</span>
                     </div>
                   </div>
 
-                  {/* High-Fidelity SaaS Dashboard Graphic */}
+                  {/* High-Fidelity 3D Viewport Graphics & Metrics */}
                   <div className="p-6 sm:p-10 space-y-8 bg-white">
                     {/* Top Stat Gauges */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="p-5 bg-[#F9FAFB] border border-[#E5E7EB] space-y-1">
-                        <span className="text-[11px] font-mono-tabular text-[#6B7280]">ACTIVE USERS</span>
-                        <div className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E]">2,845,910</div>
+                        <span className="text-[11px] font-mono-tabular text-[#6B7280]">POLYGON TOPOLOGY</span>
+                        <div className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E]">1,420,800 Polys</div>
                         <span className="text-xs text-emerald-600 font-bold inline-flex items-center gap-1">
-                          <TrendingUp className="w-3.5 h-3.5" /> +28.4% this quarter
+                          <CheckCircle2 className="w-3.5 h-3.5" /> 100% Quad Mesh (Zero N-Gons)
                         </span>
                       </div>
                       <div className="p-5 bg-[#F9FAFB] border border-[#E5E7EB] space-y-1">
-                        <span className="text-[11px] font-mono-tabular text-[#6B7280]">ONBOARDING COMPLETION</span>
-                        <div className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E]">94.8%</div>
+                        <span className="text-[11px] font-mono-tabular text-[#6B7280]">TEXTURE RESOLUTION</span>
+                        <div className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E]">8K PBR Maps</div>
                         <span className="text-xs text-emerald-600 font-bold inline-flex items-center gap-1">
-                          <TrendingUp className="w-3.5 h-3.5" /> +16.2% post-redesign
+                          <Sparkles className="w-3.5 h-3.5" /> Multi-Layer Substance LookDev
                         </span>
                       </div>
                       <div className="p-5 bg-[#F9FAFB] border border-[#E5E7EB] space-y-1">
-                        <span className="text-[11px] font-mono-tabular text-[#6B7280]">SYSTEM VELOCITY</span>
-                        <div className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E]">3.4x Faster</div>
-                        <span className="text-xs text-[#0A0A0E] font-mono-tabular">Figma to React Token Sync</span>
+                        <span className="text-[11px] font-mono-tabular text-[#6B7280]">REAL-TIME FRAME LATENCY</span>
+                        <div className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E]">60 FPS WebGL</div>
+                        <span className="text-xs text-[#0A0A0E] font-mono-tabular">Under 4.2 MB compressed GLTF</span>
                       </div>
                     </div>
 
-                    {/* Interactive Vector Analytics Graph + Dashboard Preview */}
+                    {/* Interactive Vector Analytics Graph + Viewport Preview */}
                     <div className="border border-[#E5E7EB] bg-[#FAFAFA] p-6 space-y-6">
                       <div className="flex items-center justify-between pb-4 border-b border-[#E5E7EB] text-xs font-mono-tabular">
-                        <span className="font-bold text-[#0A0A0E]">MONTHLY CONVERSION & ARR VELOCITY</span>
+                        <span className="font-bold text-[#0A0A0E]">GPU RAY-TRACED FRAME RENDERING VELOCITY & OPTIMIZATION</span>
                         <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold">Q1-Q4 RECORD</span>
-                          <span className="text-[#6B7280]">$12.4M ARR</span>
+                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold">OCTANE / REDSHIFT</span>
+                          <span className="text-[#6B7280]">16.4ms / Frame</span>
                         </div>
                       </div>
 
@@ -319,21 +307,21 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                         {/* Floating Collaborative Cursors */}
                         <div className="absolute top-1/4 left-1/3 px-2 py-1 bg-[#0A0A0E] text-white text-[10px] font-mono-tabular font-bold shadow-md flex items-center gap-1.5">
                           <span className="w-1.5 h-1.5 bg-[#D4FF00] rounded-full animate-ping" />
-                          <span>Sarah (Product Lead) inspecting retention funnel</span>
+                          <span>Alex (Lead 3D Artist) inspecting sub-division surface topology</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Dashboard Visual Mockup Image */}
-                    <div className="aspect-16/9 sm:aspect-21/9 w-full bg-[#F3F4F6] border border-[#E5E7EB] overflow-hidden relative">
+                    {/* 3D Visual Mockup Image */}
+                    <div className="aspect-16/9 sm:aspect-21/9 w-full bg-[#0E0E12] border border-[#E5E7EB] overflow-hidden relative">
                       <img
-                        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80"
-                        alt="Musemind SaaS Enterprise Dashboard Interface"
+                        src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80"
+                        alt="Precision 3D Mechanical CAD Exploded View"
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent flex items-end p-6">
                         <span className="px-3 py-1.5 bg-white text-[#0A0A0E] font-mono-tabular font-bold text-xs shadow-md border border-[#E5E7EB]">
-                          INTELLIGENT RECRUITING & ANALYTICS PIPELINE
+                          PRECISION MECHANICAL CAD EXPLODED VIEW & HIGH-POLY HARD SURFACE
                         </span>
                       </div>
                     </div>
@@ -346,21 +334,21 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
       </section>
 
       {/* =====================================================================
-          4. "Boon - Web Application Design" FEATURED SECTION
+          4. "Boon — Industrial Hardware & 3D Digital Twin" FEATURED SECTION
       ====================================================================== */}
       <section id="boon-section" className="py-24 lg:py-32 border-b border-[#E5E7EB] bg-[#F9FAFB]">
         <Scroll3DSection className="max-w-[1320px] mx-auto px-6 space-y-14">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-[#E5E7EB]">
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-2.5 py-1 bg-[#0A0A0E] text-white font-bold tracking-wider">
-                FEATURED WORK · SAAS PLATFORM
+                FEATURED 3D WORK · INDUSTRIAL HARDWARE & ROBOTICS
               </div>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-[#0A0A0E] leading-tight">
-                Boon — Web Application Design
+                Boon — Next-Gen Robotic Hardware & 3D Digital Twin
               </h2>
             </div>
             <div className="text-xs font-mono-tabular text-[#6B7280] max-w-sm">
-              MODERN & MINIMAL DESIGN SOLUTION FOR JOB REFERRALS AND APPLICANT TRACKING
+              PRECISION CAD MODELING, EXPLODED MECHANICAL VIEWS & REAL-TIME WEBGL CONFIGURATOR
             </div>
           </div>
 
@@ -371,70 +359,68 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="space-y-6">
                 <div className="flex items-center justify-between text-xs font-mono-tabular">
                   <span className="px-2.5 py-1 bg-[#D4FF00] text-[#0A0A0E] font-bold">
-                    B2B SAAS
+                    INDUSTRIAL ROBOTICS
                   </span>
                   <span className="text-[#6B7280]">SAN FRANCISCO, CA</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-[#0A0A0E] leading-tight">
-                  Reinventing Employee Referrals with Gamified Simplicity.
+                  Engineering a Photorealistic 3D Digital Twin for Autonomous Hardware.
                 </h3>
 
                 <p className="text-sm text-[#52525B] leading-relaxed">
-                  Boon is a talent acquisition SaaS that automates referral tracking and incentive rewards.
-                  Musemind conducted comprehensive user research to redesign their core dashboard,
-                  introducing a clean 2-step referral flow and real-time bounty leaderboards.
+                  Boon needed high-precision 3D hard-surface models and photorealistic CGI visuals to showcase their autonomous robotic hardware before physical manufacturing. We converted raw SolidWorks CAD blueprints into quad-clean subdivision meshes, crafted 8K tactile PBR materials (powder-coated aluminum, anodized titanium, optical sensors), and built an interactive 3D web configurator.
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#E5E7EB] text-xs font-mono-tabular">
                   <div>
                     <span className="text-[#9CA3AF] block font-semibold">SCOPE</span>
-                    <span className="text-[#0A0A0E] font-bold">Product UX, UI & Design System</span>
+                    <span className="text-[#0A0A0E] font-bold">CAD to Sub-D, 8K PBR, WebGL</span>
                   </div>
                   <div>
                     <span className="text-[#9CA3AF] block font-semibold">OUTCOME</span>
-                    <span className="text-[#0A0A0E] font-bold">+142% Candidate Submissions</span>
+                    <span className="text-[#0A0A0E] font-bold">+142% Pre-Order Conversions</span>
                   </div>
                 </div>
 
                 {/* Interactive Screen Tabs */}
                 <div className="space-y-2 pt-2">
                   <span className="text-[11px] font-mono-tabular text-[#6B7280] block font-bold">
-                    PREVIEW INTERFACE SCREEN:
+                    PREVIEW 3D ASSET VIEWPORT:
                   </span>
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() => setBoonActiveTab('dashboard')}
+                      onClick={() => setBoonActiveTab('exploded')}
                       className={`px-3 py-1.5 text-xs font-mono-tabular font-bold border transition-colors cursor-pointer ${
-                        boonActiveTab === 'dashboard'
+                        boonActiveTab === 'exploded'
                           ? 'bg-[#0A0A0E] text-white border-[#0A0A0E]'
                           : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-[#F4F5F7]'
                       }`}
                     >
-                      Bounty Dashboard
+                      Exploded View
                     </button>
                     <button
                       type="button"
-                      onClick={() => setBoonActiveTab('referrals')}
+                      onClick={() => setBoonActiveTab('wireframe')}
                       className={`px-3 py-1.5 text-xs font-mono-tabular font-bold border transition-colors cursor-pointer ${
-                        boonActiveTab === 'referrals'
+                        boonActiveTab === 'wireframe'
                           ? 'bg-[#0A0A0E] text-white border-[#0A0A0E]'
                           : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-[#F4F5F7]'
                       }`}
                     >
-                      Referral Pipeline
+                      PBR Wireframe
                     </button>
                     <button
                       type="button"
-                      onClick={() => setBoonActiveTab('analytics')}
+                      onClick={() => setBoonActiveTab('turntable')}
                       className={`px-3 py-1.5 text-xs font-mono-tabular font-bold border transition-colors cursor-pointer ${
-                        boonActiveTab === 'analytics'
+                        boonActiveTab === 'turntable'
                           ? 'bg-[#0A0A0E] text-white border-[#0A0A0E]'
                           : 'bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-[#F4F5F7]'
                       }`}
                     >
-                      Talent Analytics
+                      Turntable 360°
                     </button>
                   </div>
                 </div>
@@ -443,10 +429,10 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="space-y-4 pt-4 border-t border-[#E5E7EB]">
                 <div className="p-4 bg-[#F9FAFB] border border-[#E5E7EB] space-y-1">
                   <div className="text-xs font-mono-tabular text-[#4B5563] font-bold uppercase">
-                    Verified Client Impact:
+                    Verified Performance:
                   </div>
                   <div className="text-sm font-bold text-[#0A0A0E]">
-                    Reduced referral submission time from 14 minutes down to 3 minutes across 50,000+ recruiters.
+                    Reduced interactive 3D asset load time to under 1.8 seconds while maintaining 60 FPS across mobile and desktop browsers.
                   </div>
                 </div>
 
@@ -455,7 +441,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                   onClick={() => setSelectedCaseStudy('boon')}
                   className="w-full py-3 px-4 bg-[#0A0A0E] hover:bg-[#27272A] text-white text-xs font-bold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
                 >
-                  <span>Explore Boon Full Case Study</span>
+                  <span>Explore Boon 3D Case Study</span>
                   <ArrowUpRight className="w-4 h-4 text-[#D4FF00]" />
                 </button>
               </div>
@@ -464,42 +450,42 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
             {/* Right Multi-Image Showcase */}
             <div className="lg:col-span-7 bg-[#F4F5F7] p-6 sm:p-10 flex items-center justify-center">
               <div className="w-full space-y-4">
-                <div className="aspect-16/9 w-full bg-white border border-[#E5E7EB] shadow-md overflow-hidden relative">
+                <div className="aspect-16/9 w-full bg-[#0E0E12] border border-[#E5E7EB] shadow-md overflow-hidden relative">
                   <img
                     src={
-                      boonActiveTab === 'dashboard'
-                        ? 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80'
-                        : boonActiveTab === 'referrals'
-                        ? 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80'
-                        : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1400&q=80'
+                      boonActiveTab === 'exploded'
+                        ? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1400&q=80'
+                        : boonActiveTab === 'wireframe'
+                        ? 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1400&q=80'
+                        : 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1400&q=80'
                     }
-                    alt="Boon Web Application Design Interface"
+                    alt="Boon 3D Hardware Digital Twin Viewport"
                     className="w-full h-full object-cover transition-opacity duration-300"
                   />
-                  <div className="absolute bottom-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-md border border-[#E5E7EB] text-[11px] font-mono-tabular font-bold text-[#0A0A0E]">
-                    {boonActiveTab.toUpperCase()} VIEW · FIGMA TO REACT TOKEN SYNC
+                  <div className="absolute bottom-3 left-3 px-3 py-1 bg-white/95 backdrop-blur-md border border-[#E5E7EB] text-[11px] font-mono-tabular font-bold text-[#0A0A0E]">
+                    {boonActiveTab.toUpperCase()} · 100% QUAD SUBDIVISION GEOMETRY
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="aspect-4/3 bg-white border border-[#E5E7EB] shadow-2xs overflow-hidden relative group">
+                  <div className="aspect-4/3 bg-[#111116] border border-[#E5E7EB] shadow-2xs overflow-hidden relative group">
                     <img
-                      src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
-                      alt="Boon Candidate Referral Pipeline"
+                      src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
+                      alt="Precision Macro Hardware Details"
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-mono-tabular">
-                      CANDIDATE FUNNEL
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-mono-tabular">
+                      8K PBR MATERIAL MACRO
                     </div>
                   </div>
-                  <div className="aspect-4/3 bg-white border border-[#E5E7EB] shadow-2xs overflow-hidden relative group">
+                  <div className="aspect-4/3 bg-[#111116] border border-[#E5E7EB] shadow-2xs overflow-hidden relative group">
                     <img
-                      src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80"
-                      alt="Boon Referral Analytics Overview"
+                      src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80"
+                      alt="High-Poly Surface Topology"
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-mono-tabular">
-                      METRIC LEADERBOARD
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-mono-tabular">
+                      RAY-TRACED LIGHTING
                     </div>
                   </div>
                 </div>
@@ -510,54 +496,52 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
       </section>
 
       {/* =====================================================================
-          5. "Panther" CYBERSECURITY SECTION
+          5. "Panther" SCI-FI VEHICLE & CINEMATIC CGI SECTION
       ====================================================================== */}
       <section className="py-24 lg:py-32 border-b border-[#E5E7EB] bg-white">
         <Scroll3DSection className="max-w-[1320px] mx-auto px-6 space-y-14">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-[#E5E7EB]">
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-2.5 py-1 bg-[#0A0A0E] text-white font-bold tracking-wider">
-                FEATURED WORK · CYBERSECURITY PLATFORM
+                FEATURED 3D WORK · AUTOMOTIVE & AEROSPACE CGI
               </div>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-[#0A0A0E] leading-tight">
-                Panther — Cybersecurity Platform & Web Redesign
+                Panther — Sci-Fi Cybernetic Vehicle & Cinematic Visual Effects
               </h2>
             </div>
             <div className="text-xs font-mono-tabular text-[#6B7280] max-w-sm">
-              SIMPLIFYING COMPLEX REAL-TIME DETECTION TELEMETRY & BRAND REFRESH
+              HYPER-DETAILED HARD-SURFACE SCULPTING, PROCEDURAL SHADERS & 4K OCTANE RENDERING
             </div>
           </div>
 
           {/* Panther Showcase Card */}
           <div className="border border-[#E5E7EB] bg-[#0A0A0E] text-white shadow-2xl grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-            {/* Left Narrative (High-Tech Contrast) */}
+            {/* Left Narrative */}
             <div className="lg:col-span-5 p-8 sm:p-12 flex flex-col justify-between space-y-8 border-b lg:border-b-0 lg:border-r border-white/10">
               <div className="space-y-6">
                 <div className="flex items-center justify-between text-xs font-mono-tabular">
                   <span className="px-2.5 py-1 bg-[#D4FF00] text-[#0A0A0E] font-bold">
-                    SECURITY TECH
+                    AUTOMOTIVE CGI
                   </span>
                   <span className="text-[#9CA3AF]">AUSTIN, TX</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-white leading-tight">
-                  Turning Massive Security Data Lakes into Real-Time Threat Clarity.
+                  Crafting a Cinematic 3D Concept Vehicle for Next-Generation Mobility.
                 </h3>
 
                 <p className="text-sm text-[#9CA3AF] leading-relaxed">
-                  Panther provides cloud-scale SIEM and automated incident response. Musemind
-                  executed a comprehensive brand refresh and website redesign, simplifying developer
-                  perception and positioning Panther as the leading security operations platform.
+                  Panther commissioned our studio to design, model, and render a futuristic autonomous electric hypercar. Our artists modeled over 4.8 million polygons across aerodynamic chassis components, custom carbon-fiber weave textures, active aerodynamic spoilers, and interior HUD holographic displays for launch keynote visuals.
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 text-xs font-mono-tabular">
                   <div>
-                    <span className="text-[#6B7280] block font-semibold">RESULTS</span>
-                    <span className="text-[#D4FF00] font-bold">3.2x Enterprise Demos</span>
+                    <span className="text-[#6B7280] block font-semibold">GLOBAL IMPACT</span>
+                    <span className="text-[#D4FF00] font-bold">3.2M Global Launch Views</span>
                   </div>
                   <div>
-                    <span className="text-[#6B7280] block font-semibold">MILESTONE</span>
-                    <span className="text-white font-bold">Accelerated Series B Funding</span>
+                    <span className="text-[#6B7280] block font-semibold">HONOR</span>
+                    <span className="text-white font-bold">ArtStation Studio Pick</span>
                   </div>
                 </div>
               </div>
@@ -568,7 +552,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                     Verified Outcome:
                   </div>
                   <div className="text-sm text-[#E2E8F0]">
-                    Modernized developer messaging and accelerated Fortune 500 security team procurement inquiries.
+                    Delivered 18 cinematic 8K hero keyframes and a 60-second real-time Unreal Engine 5 showcase video.
                   </div>
                 </div>
 
@@ -577,7 +561,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                   onClick={() => setSelectedCaseStudy('panther')}
                   className="w-full py-3 px-4 bg-white hover:bg-[#F4F5F7] text-[#0A0A0E] text-xs font-bold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm"
                 >
-                  <span>Explore Panther Full Case Study</span>
+                  <span>Explore Panther 3D Case Study</span>
                   <ArrowUpRight className="w-4 h-4 text-[#0A0A0E]" />
                 </button>
               </div>
@@ -587,13 +571,13 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
             <div className="lg:col-span-7 bg-[#14141B] p-6 sm:p-10 flex items-center justify-center">
               <div className="w-full aspect-16/9 bg-[#070709] border border-white/15 overflow-hidden shadow-2xl relative">
                 <img
-                  src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1400&q=80"
-                  alt="Panther Cybersecurity Platform Interface"
+                  src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=80"
+                  alt="Panther Sci-Fi Hypercar 3D CGI"
                   className="w-full h-full object-cover opacity-90"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
                   <span className="px-3 py-1 bg-[#0A0A0E] text-[#D4FF00] border border-white/20 font-mono-tabular font-bold text-xs">
-                    REAL-TIME SIEM THREAT DETECTION CONSOLE
+                    UNREAL ENGINE 5 REAL-TIME RAY-TRACED AUTOMOTIVE PIPELINE
                   </span>
                 </div>
               </div>
@@ -620,31 +604,30 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               </h2>
 
               <p className="text-base sm:text-lg text-[#52525B] leading-relaxed">
-                Your growth partner, encouraging creativity and individual development while
-                creating excellent user experiences in a fast-paced, collaborative atmosphere.
+                A world-class collective of 3D sculptors, technical directors, and real-time computational engineers pushing the bleeding edge of computer graphics and spatial product visualization.
               </p>
 
-              {/* Numbered Achievements List (From Musemind) */}
+              {/* Numbered Achievements List */}
               <div className="divide-y divide-[#E5E7EB] border-t border-b border-[#E5E7EB] text-xs font-mono-tabular">
                 <div className="py-3.5 flex items-center justify-between">
-                  <span className="text-[#6B7280]">001. Total Awards</span>
-                  <span className="font-extrabold text-[#0A0A0E] text-base">16+ Honors</span>
+                  <span className="text-[#6B7280]">001. Studio Honors</span>
+                  <span className="font-extrabold text-[#0A0A0E] text-base">18+ CG Awards</span>
                 </div>
                 <div className="py-3.5 flex items-center justify-between">
-                  <span className="text-[#6B7280]">002. Years of Services</span>
-                  <span className="font-extrabold text-[#0A0A0E] text-base">5+ Years</span>
+                  <span className="text-[#6B7280]">002. Production Experience</span>
+                  <span className="font-extrabold text-[#0A0A0E] text-base">8+ Years in 3D</span>
                 </div>
                 <div className="py-3.5 flex items-center justify-between">
-                  <span className="text-[#6B7280]">003. Locations</span>
-                  <span className="font-extrabold text-[#0A0A0E] text-base">6 Global Hubs</span>
+                  <span className="text-[#6B7280]">003. Global Studio Hubs</span>
+                  <span className="font-extrabold text-[#0A0A0E] text-base">6 Studios Worldwide</span>
                 </div>
                 <div className="py-3.5 flex items-center justify-between">
-                  <span className="text-[#6B7280]">004. Team Members</span>
-                  <span className="font-extrabold text-[#0A0A0E] text-base">80+ Specialists</span>
+                  <span className="text-[#6B7280]">004. 3D Artists & Technical Directors</span>
+                  <span className="font-extrabold text-[#0A0A0E] text-base">85+ Specialists</span>
                 </div>
                 <div className="py-3.5 flex items-center justify-between">
-                  <span className="text-[#6B7280]">005. Happy Clients</span>
-                  <span className="font-extrabold text-[#0A0A0E] text-base">350+ Worldwide</span>
+                  <span className="text-[#6B7280]">005. Production 3D Assets Shipped</span>
+                  <span className="font-extrabold text-[#0A0A0E] text-base">12,000+ Worldwide</span>
                 </div>
               </div>
             </div>
@@ -664,7 +647,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
 
               <div className="pt-3 border-t border-[#E5E7EB] flex items-center justify-between text-xs font-mono-tabular text-[#6B7280]">
                 <span>ORBITAL GEOMETRY ENGINE</span>
-                <span className="font-bold text-[#0A0A0E]">MUSEMIND 3D LAB</span>
+                <span className="font-bold text-[#0A0A0E]">REAL-TIME 3D LAB</span>
               </div>
             </div>
           </div>
@@ -672,66 +655,84 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
       </section>
 
       {/* =====================================================================
-          7. "End-to-End Digital Capabilities"
+          7. "End-to-End 3D Modeling Capabilities"
       ====================================================================== */}
       <section className="py-24 lg:py-32 border-b border-[#E5E7EB] bg-white">
         <Scroll3DSection className="max-w-[1320px] mx-auto px-6 space-y-14">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[#E5E7EB]">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-2.5 py-1 bg-[#F4F5F7] text-[#0A0A0E] font-bold tracking-wider mb-2">
-                CORE EXPERTISE
+                CORE 3D EXPERTISE
               </div>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-[#0A0A0E] leading-tight">
-                End-to-End Digital Capabilities.
+                End-to-End 3D Modeling Capabilities.
               </h2>
             </div>
             <p className="text-sm text-[#52525B] max-w-md leading-relaxed">
-              From product thinking and experience design to development and launch, our specialists
-              work together to advance digital products.
+              From engineering CAD retopology and procedural PBR shading to character sculpting and 60 FPS WebGL engines, our artists deliver production-ready 3D precision.
             </p>
           </div>
 
           {/* 6 Capabilities Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MUSEMIND_SERVICES.map((item, idx) => (
-              <div
-                key={item.title}
-                className="p-8 bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#0A0A0E] transition-all flex flex-col justify-between space-y-6 shadow-2xs group"
-              >
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-xs font-mono-tabular">
-                    <span className="px-2 py-0.5 bg-[#0A0A0E] text-white font-bold">
-                      CAPABILITY 0{idx + 1}
-                    </span>
-                    <span className="text-[#6B7280]">{item.leadTime}</span>
+            {MUSEMIND_SERVICES.map((item, idx) => {
+              const serviceIdMap: Record<number, string> = {
+                0: '3d-modeling',
+                1: 'photorealistic-rendering',
+                2: 'ar-vr-visualization',
+                3: 'character-sculpting',
+                4: 'animation-walkthroughs',
+                5: 'archviz-digital-twins',
+              };
+              const targetServiceId = serviceIdMap[idx] || '3d-modeling';
+
+              return (
+                <div
+                  key={item.title}
+                  onClick={() => {
+                    if (onSelectService) {
+                      onSelectService(targetServiceId);
+                    } else {
+                      onNavigatePage('services');
+                    }
+                  }}
+                  className="p-8 bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#0A0A0E] transition-all flex flex-col justify-between space-y-6 shadow-2xs group cursor-pointer"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-xs font-mono-tabular">
+                      <span className="px-2 py-0.5 bg-[#0A0A0E] text-white font-bold">
+                        CAPABILITY 0{idx + 1}
+                      </span>
+                      <span className="text-[#6B7280]">{item.leadTime}</span>
+                    </div>
+
+                    <h3 className="text-2xl font-display font-extrabold text-[#0A0A0E] group-hover:text-black transition-colors">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-xs text-[#52525B] leading-relaxed">
+                      {item.summary}
+                    </p>
+
+                    <ul className="space-y-1.5 pt-2 text-xs text-[#4B5563]">
+                      {item.capabilities.slice(0, 3).map((cap) => (
+                        <li key={cap} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
+                          <span>{cap}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <h3 className="text-2xl font-display font-extrabold text-[#0A0A0E] group-hover:text-black transition-colors">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-xs text-[#52525B] leading-relaxed">
-                    {item.summary}
-                  </p>
-
-                  <ul className="space-y-1.5 pt-2 text-xs text-[#4B5563]">
-                    {item.capabilities.slice(0, 3).map((cap) => (
-                      <li key={cap} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                        <span>{cap}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="pt-6 border-t border-[#E5E7EB] flex items-center justify-between text-xs font-mono-tabular">
+                    <span className="text-[#6B7280] group-hover:text-[#0A0A0E] font-semibold">View Single Service Page</span>
+                    <span className="p-2 bg-white group-hover:bg-[#0A0A0E] text-[#0A0A0E] group-hover:text-white transition-colors">
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
-
-                <div className="pt-6 border-t border-[#E5E7EB] flex items-center justify-between text-xs font-mono-tabular">
-                  <span className="text-[#6B7280]">Figma & Code Ready</span>
-                  <span className="p-2 bg-white group-hover:bg-[#0A0A0E] text-[#0A0A0E] group-hover:text-white transition-colors">
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Scroll3DSection>
       </section>
@@ -744,15 +745,14 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-[#E5E7EB]">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-2.5 py-1 bg-[#E5E7EB] text-[#0A0A0E] font-bold tracking-wider mb-2">
-                TEAM & CULTURE
+                STUDIO TEAM & PIPELINE
               </div>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-[#0A0A0E] leading-tight">
                 Built by Specialists. Connected by One Goal.
               </h2>
             </div>
             <p className="text-sm text-[#52525B] max-w-md leading-relaxed">
-              We are a global multidisciplinary studio where UX researchers, visual craftsmen, and
-              front-end developers collaborate seamlessly from ideation to production.
+              We are a global multidisciplinary 3D studio where digital sculptors, look-development artists, and real-time shader engineers collaborate seamlessly from initial CAD to final render.
             </p>
           </div>
 
@@ -762,9 +762,9 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="w-10 h-10 bg-[#0A0A0E] text-white flex items-center justify-center font-bold">
                 01
               </div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Product Thinkers</h3>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">3D Sculptors & CAD Modelers</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Strategists who map user psychology, business models, and market gaps to establish high-converting product architectures.
+                Masters of organic anatomy, Class-A surfacing, precision topology, and micron-accurate engineering CAD models.
               </p>
             </div>
 
@@ -772,9 +772,9 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="w-10 h-10 bg-[#0A0A0E] text-white flex items-center justify-center font-bold">
                 02
               </div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">UI/UX Craftsmen</h3>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Texture & LookDev Artists</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Designers obsessed with typography hierarchy, micro-interactions, responsive states, and human-computer ergonomics.
+                Shader wizards handcrafting 8K PBR textures, procedural roughness maps, anisotropic metals, and subsurface scatter materials.
               </p>
             </div>
 
@@ -782,9 +782,9 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="w-10 h-10 bg-[#0A0A0E] text-white flex items-center justify-center font-bold">
                 03
               </div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Token Architects</h3>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Riggers & Technical Directors</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Specialists building robust, multi-brand design systems in Figma and code tokens that bridge design and development.
+                Specialists engineering kinematic skeletons, dynamic cloth and fluid physics, and mechanical exploded-view animations.
               </p>
             </div>
 
@@ -792,9 +792,9 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="w-10 h-10 bg-[#0A0A0E] text-white flex items-center justify-center font-bold">
                 04
               </div>
-              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Front-End Engineers</h3>
+              <h3 className="text-lg font-display font-bold text-[#0A0A0E]">Real-Time & WebGL Engineers</h3>
               <p className="text-xs text-[#52525B] leading-relaxed">
-                Creative developers implementing Webflow CMS, React, Next.js, and Three.js with buttery 60fps performance.
+                Creative developers optimizing Draco/Meshopt compression, WebGL shaders, and Three.js 60fps web experiences.
               </p>
             </div>
           </div>
@@ -809,14 +809,13 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-5 space-y-4">
               <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-2.5 py-1 bg-[#F4F5F7] text-[#0A0A0E] font-bold tracking-wider">
-                FAQ
+                3D FAQ
               </div>
               <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#0A0A0E]">
                 Frequently Asked Questions.
               </h2>
               <p className="text-sm text-[#52525B] leading-relaxed">
-                Have specific questions regarding sprint durations, Figma file deliverables, or
-                pricing models? Everything answered upfront.
+                Have specific questions regarding source CAD file inputs, polygon budgets, 8K PBR texture sets, or commercial licensing? Everything answered upfront.
               </p>
               <div className="pt-4">
                 <button
@@ -824,7 +823,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                   onClick={() => onNavigatePage('contact')}
                   className="py-3 px-6 bg-[#0A0A0E] hover:bg-[#27272A] text-white font-bold text-xs inline-flex items-center gap-2 cursor-pointer transition-colors shadow-xs"
                 >
-                  <span>Ask a Specific Question</span>
+                  <span>Ask a Specific 3D Question</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#D4FF00]" />
                 </button>
               </div>
@@ -868,7 +867,7 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
       </section>
 
       {/* =====================================================================
-          10. HIGH-IMPACT FINAL CTA: "Have a Project in Mind? Let's Build It."
+          10. HIGH-IMPACT FINAL CTA: "Have a 3D Project in Mind? Let's Render It."
       ====================================================================== */}
       <section className="py-24 lg:py-32 bg-[#F9FAFB] text-[#0A0A0E]">
         <Scroll3DSection className="max-w-[1320px] mx-auto px-6">
@@ -876,24 +875,23 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
             <div className="lg:col-span-6 space-y-8">
               <div className="inline-flex items-center gap-2 text-xs font-mono-tabular px-2.5 py-1 bg-[#E5E7EB] text-[#0A0A0E] font-bold tracking-wider">
                 <Send className="w-3.5 h-3.5" />
-                <span>START A CONVERSATION</span>
+                <span>START A 3D CONVERSATION</span>
               </div>
 
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-[#0A0A0E] leading-[0.98]">
-                Have a Project in Mind? Let’s <span className="bg-[#D4FF00] px-2.5 py-0.5 inline-block text-[#0A0A0E]">Build It.</span>
+                Have a 3D Project in Mind? Let’s <span className="bg-[#D4FF00] px-2.5 py-0.5 inline-block text-[#0A0A0E]">Render It.</span>
               </h2>
 
               <p className="text-base sm:text-lg text-[#52525B] leading-relaxed max-w-xl">
-                Ready to accelerate your product roadmap with award-winning UI/UX? Send us your brief
-                and we will prepare a detailed proposal and sprint breakdown within 24 hours.
+                Ready to elevate your product visuals with photorealistic 3D models and real-time CGI? Send us your concept sketches, CAD files, or reference brief, and we'll deliver a comprehensive 3D production estimate within 24 hours.
               </p>
 
               {/* Direct Email Copy Box */}
               <div className="p-4 bg-white border border-[#E5E7EB] shadow-sm flex items-center justify-between gap-4 max-w-md">
                 <div>
-                  <div className="text-[10px] font-mono-tabular text-[#6B7280] font-semibold">DIRECT INQUIRIES</div>
+                  <div className="text-[10px] font-mono-tabular text-[#6B7280] font-semibold">DIRECT STUDIO INQUIRIES</div>
                   <div className="text-sm font-mono-tabular text-[#0A0A0E] font-bold">
-                    hello@musemind.agency
+                    studio@3dmodelingcompany.com
                   </div>
                 </div>
                 <button
@@ -918,25 +916,25 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
               <div className="space-y-2 text-xs font-mono-tabular text-[#52525B]">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                  <span>Mutual NDA signed before initial discovery calls</span>
+                  <span>Mutual NDA executed prior to reviewing proprietary CAD/3D files</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                  <span>Transparent fixed-price milestone quotes</span>
+                  <span>100% full commercial IP transfer & raw source file handoff</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                  <span>Direct Slack access to Senior Design Directors</span>
+                  <span>Direct Slack access to Senior Technical Director & 3D Lead</span>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-[#E5E7EB] text-xs text-[#6B7280] space-y-1">
-                <div><strong>US Headquarters:</strong> New York, NY · <strong>European Studio:</strong> London, UK</div>
-                <div><strong>Global Delivery Hub:</strong> Singapore & International Studio</div>
+                <div><strong>US Studio:</strong> Los Angeles & New York · <strong>European Studio:</strong> London, UK & Berlin</div>
+                <div><strong>Asia Pacific Studio:</strong> Tokyo, Japan & Seoul</div>
               </div>
             </div>
 
-            {/* Embedded Clean White Brief Form */}
+            {/* Embedded Clean White 3D Commission Form */}
             <div className="lg:col-span-6 bg-white border border-[#E5E7EB] shadow-lg p-8 sm:p-12 space-y-5">
               {formSubmitted ? (
                 <div className="py-12 text-center space-y-4">
@@ -944,25 +942,25 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                     <CheckCircle2 className="w-7 h-7" />
                   </div>
                   <h3 className="text-2xl font-display font-bold text-[#0A0A0E]">
-                    Project Inquiry Received
+                    3D Project Brief Received
                   </h3>
                   <p className="text-sm text-[#52525B] max-w-md mx-auto">
-                    Thank you, {formName}. Our product strategy leads have received your{' '}
-                    {formService} inquiry and will respond to {formEmail} within 4 business hours.
+                    Thank you, {formName}. Our technical directors have received your{' '}
+                    {formService} brief and will deliver a production estimate to {formEmail} within 4 business hours.
                   </p>
                   <button
                     type="button"
                     onClick={() => setFormSubmitted(false)}
                     className="py-2.5 px-5 bg-[#0A0A0E] text-white hover:bg-[#27272A] text-xs font-bold transition-colors cursor-pointer"
                   >
-                    Send Another Inquiry
+                    Send Another 3D Inquiry
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleFormSubmit} className="space-y-4" noValidate>
                   <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
                     <h3 className="text-lg font-display font-bold text-[#0A0A0E]">
-                      Request Product Proposal
+                      Request 3D Production Quote
                     </h3>
                     <span className="text-xs text-[#0A0A0E] font-mono-tabular font-bold bg-[#D4FF00] px-2 py-0.5">
                       RESPONSE &lt; 4 HOURS
@@ -1000,28 +998,28 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-[#4B5563]">Company / Startup</label>
+                      <label className="text-xs font-medium text-[#4B5563]">Company / Brand</label>
                       <input
                         type="text"
                         value={formCompany}
                         onChange={(e) => setFormCompany(e.target.value)}
-                        placeholder="Company Name"
+                        placeholder="Company or Studio Name"
                         className="w-full px-3.5 py-2.5 bg-[#F9FAFB] border border-[#D1D5DB] text-[#0A0A0E] text-xs focus:outline-none focus:border-[#0A0A0E] focus:bg-white rounded-none"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-[#4B5563]">Primary Service</label>
+                      <label className="text-xs font-medium text-[#4B5563]">Primary 3D Service</label>
                       <select
                         value={formService}
                         onChange={(e) => setFormService(e.target.value)}
                         className="w-full px-3.5 py-2.5 bg-[#F9FAFB] border border-[#D1D5DB] text-[#0A0A0E] text-xs focus:outline-none focus:border-[#0A0A0E] focus:bg-white rounded-none"
                       >
-                        <option>UI/UX Product Design (SaaS & Web)</option>
-                        <option>Mobile App Design (iOS & Android)</option>
-                        <option>UX Research & Usability Audit</option>
-                        <option>Design Systems & Token Architecture</option>
-                        <option>Web Design & Webflow Development</option>
-                        <option>Brand Identity & Strategic Positioning</option>
+                        <option>Hard-Surface & Industrial CAD Modeling</option>
+                        <option>Photorealistic Product CGI & Turntable Animation</option>
+                        <option>Real-Time WebGL & Interactive 3D Configurator</option>
+                        <option>Organic Character & Creature Digital Sculpting</option>
+                        <option>Architectural Visualization & Metaverse Digital Twin</option>
+                        <option>Full-Scale Commercial 3D Asset Library</option>
                       </select>
                     </div>
                   </div>
@@ -1033,29 +1031,29 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
                       onChange={(e) => setFormBudget(e.target.value)}
                       className="w-full px-3.5 py-2.5 bg-[#F9FAFB] border border-[#D1D5DB] text-[#0A0A0E] text-xs focus:outline-none focus:border-[#0A0A0E] focus:bg-white rounded-none"
                     >
-                      <option>$5,000 – $10,000 (Targeted Feature Sprint / UX Audit)</option>
-                      <option>$10,000 – $25,000 (Complete Mobile App or Web MVP)</option>
-                      <option>$25,000 – $50,000 (Full SaaS Platform + Design System)</option>
-                      <option>$50,000+ (Enterprise Digital Transformation / Ongoing Sprint)</option>
+                      <option>$3,000 – $7,500 (Single High-Poly Product Model + 8K Renders)</option>
+                      <option>$7,500 – $15,000 (Multi-Angle Product Suite + Turntable Animation)</option>
+                      <option>$15,000 – $35,000 (Complete Real-Time 3D WebGL Configurator)</option>
+                      <option>$35,000+ (Enterprise 3D Asset Pipeline / Ongoing Production)</option>
                     </select>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-[#4B5563]">Project Scope & Goals *</label>
+                    <label className="text-xs font-medium text-[#4B5563]">3D Project Requirements & Source Files *</label>
                     <textarea
                       rows={3}
                       value={formMessage}
                       onChange={(e) => setFormMessage(e.target.value)}
-                      placeholder="Tell us about your product, current stage (Idea, MVP, Scaling), timeline goals, and desired deliverables..."
+                      placeholder="Tell us about your 3D asset requirements, source files (CAD, STEP, sketches, scans), polygon budget, and intended platform (WebGL, Unreal Engine, Film, E-Commerce)..."
                       className="w-full px-3.5 py-2.5 bg-[#F9FAFB] border border-[#D1D5DB] text-[#0A0A0E] text-xs focus:outline-none focus:border-[#0A0A0E] focus:bg-white rounded-none resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 px-6 bg-[#0A0A0E] hover:bg-[#27272A] text-white font-bold text-xs uppercase tracking-wider transition-colors rounded-none flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg"
+                    className="w-full py-3.5 px-6 bg-[#0A0A0E] hover:bg-[#27272A] text-white font-bold text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
                   >
-                    <span>Submit Project Brief</span>
+                    <span>Submit 3D Project Brief</span>
                     <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
                   </button>
                 </form>
@@ -1066,156 +1064,162 @@ export const HomeTwoMusemind: React.FC<HomeTwoMusemindProps> = ({
       </section>
 
       {/* =====================================================================
-          CASE STUDY MODAL (Interactive detail view for Boon or Panther)
+          11. CASE STUDY MODAL (Interactive deep dive for Boon & Panther)
       ====================================================================== */}
       {selectedCaseStudy && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          <div className="bg-white border border-[#E5E7EB] shadow-2xl max-w-3xl w-full p-6 sm:p-10 space-y-6 relative my-8">
-            <button
-              type="button"
-              onClick={() => setSelectedCaseStudy(null)}
-              className="absolute top-6 right-6 p-2 bg-[#F4F5F7] hover:bg-[#E5E7EB] text-[#0A0A0E] cursor-pointer transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setSelectedCaseStudy(null)}
+        >
+          <div
+            className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[#E5E7EB] shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-[#E5E7EB] px-6 py-4 flex items-center justify-between z-10">
+              <span className="text-xs font-mono-tabular font-bold text-[#0A0A0E]">
+                3D CASE STUDY · {selectedCaseStudy.toUpperCase()}
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedCaseStudy(null)}
+                className="p-1 hover:bg-[#F4F5F7] text-[#0A0A0E] cursor-pointer"
+                title="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            {selectedCaseStudy === 'boon' ? (
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <span className="px-2.5 py-1 bg-[#D4FF00] text-[#0A0A0E] font-bold text-xs font-mono-tabular">
-                    B2B SAAS CASE STUDY
-                  </span>
-                  <h3 className="text-3xl font-display font-extrabold text-[#0A0A0E]">
-                    Boon — Web Application Design & Referral Tracking
-                  </h3>
-                  <p className="text-sm text-[#52525B]">
-                    Transforming complex candidate recruitment into an effortless 2-click referral system.
-                  </p>
-                </div>
-
-                <div className="aspect-16/9 w-full bg-[#F4F5F7] border border-[#E5E7EB] overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
-                    alt="Boon Case Study Overview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 p-4 bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono-tabular">
-                  <div>
-                    <span className="text-[#6B7280] block">CANDIDATE LIFT</span>
-                    <span className="font-extrabold text-base text-[#0A0A0E]">+142%</span>
+            <div className="p-6 sm:p-10 space-y-8 text-[#0A0A0E]">
+              {selectedCaseStudy === 'boon' ? (
+                <>
+                  <div className="space-y-3">
+                    <span className="px-2.5 py-1 bg-[#D4FF00] text-[#0A0A0E] text-xs font-bold font-mono-tabular">
+                      INDUSTRIAL ROBOTICS & 3D DIGITAL TWIN
+                    </span>
+                    <h3 className="text-3xl font-display font-extrabold">
+                      Boon — Autonomous Hardware Digital Twin & Interactive Configurator
+                    </h3>
+                    <p className="text-sm text-[#52525B]">
+                      San Francisco, CA · Completed in 4 Weeks
+                    </p>
                   </div>
-                  <div>
-                    <span className="text-[#6B7280] block">TIME TO SUBMIT</span>
-                    <span className="font-extrabold text-base text-[#0A0A0E]">3 Minutes</span>
+
+                  <div className="aspect-16/9 bg-[#0E0E12] overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1400&q=80"
+                      alt="Boon 3D Hardware Model"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div>
-                    <span className="text-[#6B7280] block">VENTURE ROUND</span>
-                    <span className="font-extrabold text-base text-[#0A0A0E]">$14M Series A</span>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono-tabular">
+                    <div>
+                      <span className="text-[#6B7280] block">POLYGONS</span>
+                      <span className="text-base font-bold text-[#0A0A0E]">1.4M Quad Sub-D</span>
+                    </div>
+                    <div>
+                      <span className="text-[#6B7280] block">PBR MATERIALS</span>
+                      <span className="text-base font-bold text-[#0A0A0E]">8K Multi-Layer</span>
+                    </div>
+                    <div>
+                      <span className="text-[#6B7280] block">WEBGL SPEED</span>
+                      <span className="text-base font-bold text-[#0A0A0E]">Sub-1.8s Load / 60 FPS</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-3 text-sm text-[#52525B] leading-relaxed">
-                  <h4 className="font-display font-bold text-base text-[#0A0A0E]">Key Deliverables:</h4>
-                  <ul className="list-disc list-inside space-y-1 text-xs">
-                    <li>End-to-end recruitment manager and employee dashboard wireframing in Figma</li>
-                    <li>Tokenized design system with light/dark contrast specs and WCAG compliance</li>
-                    <li>Gamified bounty leaderboards and instant Slack notification integrations</li>
-                    <li>Full developer handoff with React component specifications</li>
-                  </ul>
-                </div>
+                  <div className="space-y-4 text-sm text-[#52525B] leading-relaxed">
+                    <h4 className="text-base font-display font-bold text-[#0A0A0E]">The Challenge</h4>
+                    <p>
+                      Boon had engineered a groundbreaking autonomous industrial robot, but needed photorealistic 3D visualization to secure multi-million dollar supply contracts before physical tooling was completed.
+                    </p>
 
-                <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedCaseStudy(null);
-                      onNavigatePage('contact');
-                    }}
-                    className="py-3 px-6 bg-[#0A0A0E] text-white font-bold text-xs inline-flex items-center gap-2 cursor-pointer hover:bg-[#27272A]"
-                  >
-                    <span>Request Similar SaaS Project</span>
-                    <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCaseStudy(null)}
-                    className="text-xs text-[#6B7280] hover:text-[#0A0A0E] cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <span className="px-2.5 py-1 bg-[#0A0A0E] text-[#D4FF00] font-bold text-xs font-mono-tabular">
-                    SECURITY TECH CASE STUDY
-                  </span>
-                  <h3 className="text-3xl font-display font-extrabold text-[#0A0A0E]">
-                    Panther — Enterprise SIEM Platform & Brand Refresh
-                  </h3>
-                  <p className="text-sm text-[#52525B]">
-                    Simplifying petabyte-scale security log analysis for Fortune 500 SecOps teams.
-                  </p>
-                </div>
-
-                <div className="aspect-16/9 w-full bg-[#111116] border border-[#E5E7EB] overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80"
-                    alt="Panther Case Study Overview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 p-4 bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono-tabular">
-                  <div>
-                    <span className="text-[#6B7280] block">DEMO CONVERSIONS</span>
-                    <span className="font-extrabold text-base text-[#0A0A0E]">3.2x Lift</span>
+                    <h4 className="text-base font-display font-bold text-[#0A0A0E]">Our 3D Solution</h4>
+                    <p>
+                      We ingested raw SolidWorks engineering files containing over 800 individual fasteners and internal circuitry. Our sculptors retopologized each shell into clean quad-dominant subdivision surfaces, modeled micro-chamfers to capture realistic specular highlights, authored procedural powder-coated finishes, and packaged an interactive Three.js 3D web configurator.
+                    </p>
                   </div>
-                  <div>
-                    <span className="text-[#6B7280] block">TRIAGE VELOCITY</span>
-                    <span className="font-extrabold text-base text-[#0A0A0E]">65% Faster</span>
-                  </div>
-                  <div>
-                    <span className="text-[#6B7280] block">FUNDING ROUND</span>
-                    <span className="font-extrabold text-base text-[#0A0A0E]">$120M Raised</span>
-                  </div>
-                </div>
 
-                <div className="space-y-3 text-sm text-[#52525B] leading-relaxed">
-                  <h4 className="font-display font-bold text-base text-[#0A0A0E]">Key Deliverables:</h4>
-                  <ul className="list-disc list-inside space-y-1 text-xs">
-                    <li>Full developer portal and marketing site redesign optimized for security engineers</li>
-                    <li>Interactive live log telemetry visualization and query builder UI</li>
-                    <li>Re-architected brand identity and multi-platform design tokens</li>
-                    <li>Technical sales collateral and enterprise product showreel</li>
-                  </ul>
-                </div>
+                  <div className="pt-4 border-t border-[#E5E7EB] flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedCaseStudy(null);
+                        onNavigatePage('contact');
+                      }}
+                      className="py-3 px-6 bg-[#0A0A0E] text-white hover:bg-[#27272A] text-xs font-bold inline-flex items-center gap-2 cursor-pointer"
+                    >
+                      <span>Commission a Similar 3D Model</span>
+                      <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    <span className="px-2.5 py-1 bg-[#D4FF00] text-[#0A0A0E] text-xs font-bold font-mono-tabular">
+                      AUTOMOTIVE CGI & CINEMATIC VFX
+                    </span>
+                    <h3 className="text-3xl font-display font-extrabold">
+                      Panther — Sci-Fi Cybernetic Vehicle Concept & Unreal Engine 5 Pipeline
+                    </h3>
+                    <p className="text-sm text-[#52525B]">
+                      Austin, TX · Completed in 6 Weeks
+                    </p>
+                  </div>
 
-                <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-between">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedCaseStudy(null);
-                      onNavigatePage('contact');
-                    }}
-                    className="py-3 px-6 bg-[#0A0A0E] text-white font-bold text-xs inline-flex items-center gap-2 cursor-pointer hover:bg-[#27272A]"
-                  >
-                    <span>Request Security Platform Project</span>
-                    <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCaseStudy(null)}
-                    className="text-xs text-[#6B7280] hover:text-[#0A0A0E] cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
+                  <div className="aspect-16/9 bg-[#070709] overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=80"
+                      alt="Panther Sci-Fi Hypercar"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-[#F9FAFB] border border-[#E5E7EB] text-xs font-mono-tabular">
+                    <div>
+                      <span className="text-[#6B7280] block">POLYGONS</span>
+                      <span className="text-base font-bold text-[#0A0A0E]">4.8M Polygons</span>
+                    </div>
+                    <div>
+                      <span className="text-[#6B7280] block">RENDER ENGINE</span>
+                      <span className="text-base font-bold text-[#0A0A0E]">Unreal Engine 5 / Octane</span>
+                    </div>
+                    <div>
+                      <span className="text-[#6B7280] block">IMPACT</span>
+                      <span className="text-base font-bold text-[#0A0A0E]">3.2M Global Launch Views</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 text-sm text-[#52525B] leading-relaxed">
+                    <h4 className="text-base font-display font-bold text-[#0A0A0E]">The Challenge</h4>
+                    <p>
+                      Panther required a head-turning, cinematic launch video and high-resolution print stills for their autonomous electric concept vehicle announcement at a major international automotive expo.
+                    </p>
+
+                    <h4 className="text-base font-display font-bold text-[#0A0A0E]">Our 3D Solution</h4>
+                    <p>
+                      Our hard-surface modelers constructed aerodynamic body panels from scratch using Class-A surfacing techniques. We developed anisotropic carbon-fiber weave shaders, illuminated LED matrix light strips with true spectral caustics, and rendered the sequence in Unreal Engine 5 using Lumen dynamic global illumination and Nanite geometry virtualization.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-[#E5E7EB] flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedCaseStudy(null);
+                        onNavigatePage('contact');
+                      }}
+                      className="py-3 px-6 bg-[#0A0A0E] text-white hover:bg-[#27272A] text-xs font-bold inline-flex items-center gap-2 cursor-pointer"
+                    >
+                      <span>Commission Automotive 3D CGI</span>
+                      <ArrowRight className="w-4 h-4 text-[#D4FF00]" />
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

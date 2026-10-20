@@ -55,11 +55,13 @@ import {
   PinnedHorizontal3DStrip,
 } from './components/MusemindScrollEffects';
 import { HomeTwoMusemind } from './components/HomeTwoMusemind';
+import { ServiceDetailPage } from './components/ServiceDetailPage';
+import { DETAILED_SERVICES, getServiceById } from './data/servicesData';
 
 export type PageId =
   | 'home'
-  | 'home2'
   | 'services'
+  | 'service-detail'
   | 'models'
   | 'portfolio'
   | 'estimator'
@@ -69,8 +71,8 @@ export default function App() {
   // Default to Light theme ('light'), switchable to Dark ('dark')
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // Multi-Page Navigation State (Default to Home 2 Musemind Edition)
-  const [activePage, setActivePage] = useState<PageId>('home2');
+  // Multi-Page Navigation State (Default to main Home)
+  const [activePage, setActivePage] = useState<PageId>('home');
 
   useEffect(() => {
     const root = document.documentElement;
@@ -81,10 +83,30 @@ export default function App() {
     }
   }, [theme]);
 
+  // Selected Service for Single Service Page
+  const [selectedServiceId, setSelectedServiceId] = useState<string>('3d-modeling');
+
   // Scroll to top when changing pages
   const navigateToPage = (page: PageId) => {
     setActivePage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToService = (serviceId: string) => {
+    setSelectedServiceId(serviceId);
+    setActivePage('service-detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCommissionService = (serviceTitle: string, budgetTier?: string) => {
+    setFormDiscipline(serviceTitle);
+    if (budgetTier) {
+      setFormBudget(budgetTier);
+    }
+    setFormMessage(
+      `We would like to commission ${serviceTitle}. Please review our project scope and provide a formal milestone estimate.`
+    );
+    navigateToPage('contact');
   };
 
   const toggleTheme = () => {
@@ -180,8 +202,7 @@ export default function App() {
   };
 
   const NAV_ITEMS: { id: PageId; label: string; badge?: string }[] = [
-    { id: 'home', label: 'Home 1' },
-    { id: 'home2', label: 'Home 2', badge: 'MUSEMIND' },
+    { id: 'home', label: 'Home' },
     { id: 'services', label: 'Services' },
     { id: 'models', label: '3D Studio' },
     { id: 'portfolio', label: 'Portfolio' },
@@ -190,16 +211,16 @@ export default function App() {
   ];
 
   return (
-    <div className={`min-h-screen ${activePage === 'home2' ? 'bg-[#FFFFFF] text-[#0A0A0E]' : 'bg-[#F6F6F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-[#F4F4F0]'} flex flex-col transition-colors duration-150 relative`}>
+    <div className={`min-h-screen ${activePage === 'home' || activePage === 'service-detail' ? 'bg-[#FFFFFF] text-[#0A0A0E]' : 'bg-[#F6F6F2] text-[#090A0C] dark:bg-[#090A0C] dark:text-[#F4F4F0]'} flex flex-col transition-colors duration-150 relative`}>
       {/* Global Full-Viewport Scroll-Reactive Three.js 3D Spatial Environment */}
-      <Scroll3DBackground theme={activePage === 'home2' ? 'light' : theme} activePage={activePage} />
+      <Scroll3DBackground theme={activePage === 'home' || activePage === 'service-detail' ? 'light' : theme} activePage={activePage} />
       {/* =====================================================================
           TOP BAR CONTRACT (Strict 1-Row, 3-Zone Contract, Zero Radius)
           Zone 1: Uploaded Brand Logo
-          Zone 2: 7 single-line page navigation links (Home 1, Home 2 Musemind, etc.)
+          Zone 2: 6 single-line page navigation links (Home, Services, 3D Studio, Portfolio, Estimator, Contact)
           Zone 3: Primary action (Contact Us)
       ====================================================================== */}
-      <header className={`sticky top-0 z-40 h-16 border-b transition-colors duration-150 backdrop-blur-md ${activePage === 'home2' ? 'bg-white/95 border-[#E5E7EB] text-[#0A0A0E]' : 'border-black/15 dark:border-white/10 bg-[#F6F6F2]/95 dark:bg-[#090A0C]/95'}`}>
+      <header className={`sticky top-0 z-40 h-16 border-b transition-colors duration-150 backdrop-blur-md ${activePage === 'home' || activePage === 'service-detail' ? 'bg-white/95 border-[#E5E7EB] text-[#0A0A0E]' : 'border-black/15 dark:border-white/10 bg-[#F6F6F2]/95 dark:bg-[#090A0C]/95'}`}>
         <div className="max-w-[1320px] mx-auto h-full px-6 flex items-center justify-between gap-4">
           {/* Zone 1: Brand Logo */}
           <button
@@ -214,8 +235,7 @@ export default function App() {
           {/* Zone 2: Dedicated Multi-Page Navigation Links */}
           <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium">
             {NAV_ITEMS.map((item) => {
-              const isActive = activePage === item.id;
-              const isMusemind = item.id === 'home2';
+              const isActive = activePage === item.id || (item.id === 'services' && activePage === 'service-detail');
               return (
                 <button
                   key={item.id}
@@ -223,10 +243,10 @@ export default function App() {
                   onClick={() => navigateToPage(item.id)}
                   className={`py-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer border-b-2 flex items-center gap-1.5 ${
                     isActive
-                      ? activePage === 'home2'
+                      ? (activePage === 'home' || activePage === 'service-detail')
                         ? 'border-[#0A0A0E] text-[#0A0A0E] font-bold'
                         : 'border-[#090A0C] dark:border-[#FACC15] text-[#090A0C] dark:text-[#F4F4F0] font-semibold'
-                      : activePage === 'home2'
+                      : (activePage === 'home' || activePage === 'service-detail')
                       ? 'border-transparent text-[#52525B] hover:text-[#0A0A0E]'
                       : 'border-transparent text-[#475569] dark:text-[#94A3B8] hover:text-[#090A0C] dark:hover:text-[#F4F4F0]'
                   }`}
@@ -248,7 +268,7 @@ export default function App() {
               type="button"
               onClick={() => navigateToPage('contact')}
               className={`py-2 px-4 text-xs sm:text-sm font-semibold rounded-none transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                activePage === 'home2'
+                activePage === 'home' || activePage === 'service-detail'
                   ? 'bg-[#0A0A0E] hover:bg-[#27272A] text-white font-bold shadow-xs'
                   : 'bg-[#090A0C] hover:bg-[#1E293B] text-[#FACC15] dark:bg-[#FACC15] dark:hover:bg-[#EAB308] dark:text-[#090A0C]'
               }`}
@@ -261,12 +281,12 @@ export default function App() {
 
       {/* Mobile Secondary Page Switcher Bar (Visible only on small screens) */}
       <div className={`md:hidden flex items-center overflow-x-auto border-b px-4 py-2 gap-2 ${
-        activePage === 'home2'
+        activePage === 'home' || activePage === 'service-detail'
           ? 'bg-white border-[#E5E7EB]'
           : 'border-black/15 dark:border-white/10 bg-white dark:bg-[#121418]'
       }`}>
         {NAV_ITEMS.map((item) => {
-          const isActive = activePage === item.id;
+          const isActive = activePage === item.id || (item.id === 'services' && activePage === 'service-detail');
           return (
             <button
               key={item.id}
@@ -274,10 +294,10 @@ export default function App() {
               onClick={() => navigateToPage(item.id)}
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap shrink-0 cursor-pointer border ${
                 isActive
-                  ? activePage === 'home2'
+                  ? (activePage === 'home' || activePage === 'service-detail')
                     ? 'bg-[#0A0A0E] text-white border-[#0A0A0E] font-bold'
                     : 'bg-[#090A0C] text-[#FACC15] border-[#090A0C] dark:bg-[#FACC15] dark:text-[#090A0C]'
-                  : activePage === 'home2'
+                  : (activePage === 'home' || activePage === 'service-detail')
                   ? 'bg-[#F9FAFB] text-[#4B5563] border-[#E5E7EB] hover:text-[#0A0A0E]'
                   : 'bg-[#F6F6F2] dark:bg-[#090A0C] text-[#475569] dark:text-[#94A3B8] border-black/10 dark:border-white/10'
               }`}
@@ -294,1092 +314,12 @@ export default function App() {
       ====================================================================== */}
       <main className="flex-1 relative z-10">
         {/* -------------------------------------------------------------------
-            PAGE 1: HOME PAGE
+            PAGE 1: MAIN HOME (MUSEMIND CLEAN WHITE EDITION)
         -------------------------------------------------------------------- */}
         {activePage === 'home' && (
-          <div>
-            {/* Hero Section */}
-            <section className="pt-12 pb-20 lg:pt-16 lg:pb-24 border-b border-black/15 dark:border-white/10">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6" intensity={0.85}>
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end mb-12">
-                  <div className="lg:col-span-8 space-y-5">
-                    <div className="flex items-center gap-2 text-xs text-[#475569] dark:text-[#94A3B8]">
-                      <span>Leading Global 3D Modeling Company</span>
-                      <span aria-hidden="true">·</span>
-                      <span>New York, Zurich & Tokyo</span>
-                      <span aria-hidden="true">·</span>
-                      <span>ISO-27001 NDA Protected</span>
-                    </div>
-
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-[#090A0C] dark:text-[#F4F4F0] leading-[1.06] max-w-3xl">
-                      Photorealistic 3D Modeling & Architectural CGI Engineered to Convert.
-                    </h1>
-                  </div>
-
-                  <div className="lg:col-span-4 space-y-6">
-                    <p className="text-base text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      Trusted 3D Modeling Company delivering high-quality 3D models, ray-traced
-                      renders, and interactive WebGL visualizations for architects, luxury brands,
-                      and hardware manufacturers worldwide.
-                    </p>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => navigateToPage('models')}
-                        className="py-3 px-6 bg-[#090A0C] hover:bg-[#1E293B] text-[#FACC15] dark:bg-[#FACC15] dark:hover:bg-[#EAB308] dark:text-[#090A0C] font-semibold text-sm rounded-none transition-colors inline-flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
-                      >
-                        <Box className="w-4 h-4" />
-                        <span>Launch Interactive 3D Studio</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => navigateToPage('portfolio')}
-                        className="py-3 px-5 text-sm font-medium text-[#090A0C] dark:text-[#F4F4F0] bg-white dark:bg-[#121418] hover:bg-black/5 dark:hover:bg-white/5 border border-black/20 dark:border-white/15 rounded-none transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                      >
-                        View 8K Portfolio
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Live Interactive 3D WebGL Model Embedded Directly on Home */}
-                <div className="mb-14">
-                  <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                        Interactive Real-Time 3D Viewport
-                      </span>
-                      <span aria-hidden="true" className="text-[#475569] dark:text-[#94A3B8]">
-                        ·
-                      </span>
-                      <span className="text-[#475569] dark:text-[#94A3B8]">
-                        Rotate, zoom, switch between PBR / Clay / Wireframe, and explode assemblies
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => navigateToPage('models')}
-                      className="text-xs font-semibold text-[#090A0C] dark:text-[#FACC15] hover:underline inline-flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Open Fullscreen 3D Model Lab</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  <ScrollExpand3DContainer>
-                    <Interactive3DModelViewer
-                      initialPreset="turbine"
-                      onSelectPresetForQuote={handleCommission3DModel}
-                    />
-                  </ScrollExpand3DContainer>
-                </div>
-
-                {/* Verified Studio Production Metrics */}
-                <div className="pt-10 border-t border-black/15 dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <div>
-                    <div className="text-3xl lg:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] font-mono-tabular">
-                      140+
-                    </div>
-                    <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0] mt-1">
-                      Global Enterprise Clients
-                    </div>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-1">
-                      Architectural firms, watchmakers, and industrial OEMs across 18 countries.
-                    </p>
-                  </div>
-
-                  <div>
-                    <div className="text-3xl lg:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] font-mono-tabular">
-                      12 Years
-                    </div>
-                    <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0] mt-1">
-                      Production CGI Track Record
-                    </div>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-1">
-                      Over 4,200 bespoke 3D models and architectural scenes delivered on schedule.
-                    </p>
-                  </div>
-
-                  <div>
-                    <div className="text-3xl lg:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] font-mono-tabular">
-                      3 Studios
-                    </div>
-                    <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0] mt-1">
-                      Follow-the-Sun Production Hubs
-                    </div>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-1">
-                      New York, Zurich, and Tokyo hubs enabling 24-hour rendering turnaround.
-                    </p>
-                  </div>
-
-                  <div>
-                    <div className="text-3xl lg:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] font-mono-tabular">
-                      42 Senior
-                    </div>
-                    <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0] mt-1">
-                      3D Artists & LookDev Leads
-                    </div>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-1">
-                      Specialists in V-Ray, Octane, Corona, Unreal Engine 5, and SolidWorks CAD.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Trusted By Global Brands */}
-                <div className="mt-12 pt-8 border-t border-black/10 dark:border-white/5 flex flex-wrap items-center justify-between gap-6">
-                  <span className="text-xs text-[#475569] dark:text-[#94A3B8]">
-                    Trusted by architectural & product teams at:
-                  </span>
-                  <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-                    {CLIENT_BRANDS.map((brand) => (
-                      <div key={brand.name} className="flex items-center gap-2 text-xs">
-                        <span className="font-display font-bold tracking-wider text-[#090A0C] dark:text-[#E2E8F0]">
-                          {brand.name}
-                        </span>
-                        <span className="text-black/25 dark:text-white/25" aria-hidden="true">
-                          /
-                        </span>
-                        <span className="text-[#475569] dark:text-[#94A3B8]">{brand.sector}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 1. VELOCITY-REACTIVE KINETIC MARQUEE */}
-            <VelocityScrollMarquee />
-
-            {/* 2. AGENCY MANIFESTO & ABOUT STATEMENT ("Who We Are & What We Believe") */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-16">
-                <div className="space-y-4">
-                  <div className="inline-flex items-center gap-2 text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>01 — WHO WE ARE & WHAT WE BELIEVE</span>
-                  </div>
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-[1.1] max-w-4xl">
-                    We believe extraordinary 3D visualization is a competitive business engine, not
-                    just an aesthetic craft.
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start pt-6 border-t border-black/10 dark:border-white/10">
-                  <div className="lg:col-span-6 space-y-4 text-sm sm:text-base text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                    <p>
-                      Modern architecture, luxury horology, and high-performance hardware cannot
-                      rely on 2D blueprints or delay marketing campaigns six weeks waiting for
-                      physical prototypes. We bridge CAD engineering, cinematic light simulation, and
-                      real-time spatial computing.
-                    </p>
-                    <p>
-                      Every asset we deliver is crafted with clean quad topology and ACEScg color
-                      grading. Whether it’s securing a municipal permit on a $14M residential villa or
-                      boosting global pre-orders by 165%, we engineer visuals that convert audiences
-                      into investors and buyers.
-                    </p>
-                  </div>
-
-                  <div className="lg:col-span-6 space-y-4 text-sm sm:text-base text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                    <p>
-                      Our follow-the-sun production hubs in New York, Zurich, and Tokyo give enterprise
-                      teams 24-hour turnaround capability without sacrificing millimeter-level
-                      geometric fidelity.
-                    </p>
-                    <div className="pt-2 flex flex-wrap gap-4 text-xs font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                      <span className="px-3 py-1.5 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
-                        Sub-Millimeter CAD Conversion
-                      </span>
-                      <span className="px-3 py-1.5 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
-                        8K 32-Bit Linear Ray-Tracing
-                      </span>
-                      <span className="px-3 py-1.5 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
-                        Apple Vision Pro & WebXR Ready
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 4 Studio Differentiator Metric Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
-                  {STUDIO_METRICS.map((metric, idx) => (
-                    <div
-                      key={metric.label}
-                      className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] space-y-2"
-                    >
-                      <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
-                        METRIC 0{idx + 1}
-                      </div>
-                      <div className="text-3xl lg:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] font-mono-tabular">
-                        {metric.number}
-                      </div>
-                      <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                        {metric.label}
-                      </div>
-                      <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                        {metric.detail}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 3. SELECTED WORK / STICKY STACKING 3D CASE STUDY DECK */}
-            <StickyStackingDeck
-              onSelectProject={(project) => setActiveLightboxProject(project)}
-              onNavigatePortfolio={() => navigateToPage('portfolio')}
-            />
-
-            {/* 4. CORE SERVICES & CAPABILITIES BENTO SHOWCASE */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
-                      <Layers className="w-3.5 h-3.5" />
-                      <span>02 — CORE CAPABILITIES & SPECIALIZATIONS</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
-                      Comprehensive 3D Pipelines Built for Performance.
-                    </h2>
-                  </div>
-                  <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
-                    Four dedicated production disciplines covering CAD translation, architectural
-                    spatial rendering, broadcast-ready 60fps motion, and browser WebGL configurators.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  {SERVICES.map((service, idx) => {
-                    const isWide = idx === 0 || idx === 3;
-                    return (
-                      <article
-                        key={service.id}
-                        className={`${
-                          isWide ? 'lg:col-span-7' : 'lg:col-span-5'
-                        } border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] overflow-hidden flex flex-col justify-between group hover:border-black/40 dark:hover:border-white/25 transition-colors`}
-                      >
-                        <div className="relative aspect-16/9 w-full overflow-hidden bg-[#0D0F12]">
-                          <img
-                            src={service.image}
-                            alt={service.title}
-                            referrerPolicy="no-referrer"
-                            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-xs text-[#E2E8F0]">
-                            <span className="font-mono-tabular text-[#FACC15] font-semibold">
-                              Lead Time: {service.leadTime}
-                            </span>
-                            <span className="text-[#CBD5E1] font-mono-tabular">
-                              {service.formats}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
-                          <div className="space-y-3">
-                            <h3 className="text-xl sm:text-2xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                              {service.title}
-                            </h3>
-                            <p className="text-xs font-medium text-[#1E293B] dark:text-[#E2E8F0]">
-                              {service.subtitle}
-                            </p>
-                            <p className="text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                              {service.description}
-                            </p>
-                          </div>
-
-                          <div className="pt-5 border-t border-black/10 dark:border-white/10 space-y-3">
-                            <div className="text-xs text-[#475569] dark:text-[#94A3B8]">
-                              <span className="text-[#090A0C] dark:text-[#F4F4F0] font-semibold">
-                                Deliverables:{' '}
-                              </span>
-                              <span>{service.deliverables}</span>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4 pt-1">
-                              <span className="text-xs text-[#B45309] dark:text-[#FACC15] font-medium">
-                                {service.outcomeStat}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFormDiscipline(service.title);
-                                  navigateToPage('estimator');
-                                }}
-                                className="text-xs font-semibold text-[#090A0C] dark:text-[#F4F4F0] hover:text-[#B45309] dark:hover:text-[#FACC15] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors cursor-pointer"
-                              >
-                                <span>Calculate Service Cost</span>
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 5. LIVE SCROLL-DRIVEN 3D EXPLODED CHOREOGRAPHY STAGE */}
-            <Scroll3DChoreography onOpenStudio={() => navigateToPage('models')} />
-
-            {/* 6. TRANSPARENT 4-STAGE PRODUCTION WORKFLOW ("How We Work") */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>03 — TRANSPARENT WORKFLOW & MILESTONES</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
-                      Four Auditable Gates. Zero Creative Drift.
-                    </h2>
-                  </div>
-                  <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
-                    Every project moves through structured revision gates with browser-based clay
-                    turntables and 32-bit look-development proofs before final rendering.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                  {PROCESS_STEPS.map((step, index) => {
-                    const isSelected = activeProcessIndex === index;
-                    return (
-                      <div
-                        key={step.number}
-                        onClick={() => setActiveProcessIndex(index)}
-                        className={`p-6 border transition-colors cursor-pointer flex flex-col justify-between ${
-                          isSelected
-                            ? 'bg-white dark:bg-[#181B22] border-[#090A0C] dark:border-[#FACC15] border-2 shadow-lg'
-                            : 'bg-[#F6F6F2] dark:bg-[#0D0F12] border-black/15 dark:border-white/10 hover:border-black/40 dark:hover:border-white/25'
-                        }`}
-                      >
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between text-xs font-mono-tabular">
-                            <span className="text-[#B45309] dark:text-[#FACC15] font-semibold">
-                              Stage {step.number} · {step.duration}
-                            </span>
-                            <span className="text-[#475569] dark:text-[#94A3B8]">{step.phase}</span>
-                          </div>
-
-                          <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                            {step.title}
-                          </h3>
-
-                          <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                            {step.summary}
-                          </p>
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-black/10 dark:border-white/10 space-y-2">
-                          <div className="text-[11px] text-[#475569] dark:text-[#94A3B8] font-mono-tabular">
-                            {step.technicalDetails}
-                          </div>
-                          <div className="text-xs font-semibold text-[#090A0C] dark:text-[#E2E8F0]">
-                            Milestone: {step.clientMilestone}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 7. PINNED VERTICAL-TO-HORIZONTAL 3D ASSET REEL (10 Models) */}
-            <PinnedHorizontal3DStrip
-              onSelectModelInStudio={(presetId) => {
-                setSelectedStudioModel(presetId);
-                navigateToPage('models');
-              }}
-            />
-
-            {/* 8. 8K BEFORE / AFTER RENDER PASS INSPECTOR */}
-            <section className="py-20 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
-                      SUB-MILLIMETER LOOKDEV & RAY-TRACING
-                    </div>
-                    <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Compare Subdivision Mesh vs. Final 8K Render.
-                    </h2>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => navigateToPage('services')}
-                    className="py-2.5 px-5 bg-[#090A0C] text-[#F6F6F2] dark:bg-white dark:text-[#090A0C] text-xs font-semibold inline-flex items-center gap-2 self-start cursor-pointer"
-                  >
-                    <span>Explore All 4 Services</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <RenderInspector
-                  image={PORTFOLIO_ITEMS[0].image}
-                  title="Lake Zurich Cantilever Residence · Keller & Partner Architekten"
-                  subtitle="Interactive Subdivision Geometry vs. Final 8K V-Ray Twilight Render"
-                  polyCount="48.4M Polygons"
-                  resolution="7680 × 4320 px · 32-Bit EXR"
-                  engine="V-Ray 7"
-                  onOpenLightbox={() => setActiveLightboxProject(PORTFOLIO_ITEMS[0])}
-                />
-              </Scroll3DSection>
-            </section>
-
-            {/* 9. WHY CHOOSE US / STUDIO DIFFERENTIATORS ("The Studio Advantage") */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>04 — WHY CHOOSE 3D MODELING COMPANY</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
-                      Engineered for Zero Creative Compromise.
-                    </h2>
-                  </div>
-                  <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
-                    How our technical infrastructure, NDA standards, and senior modeling leads
-                    outperform traditional agencies and freelance networks.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
-                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      PILLAR 01
-                    </span>
-                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Sub-Millimeter Geometric Accuracy
-                    </h3>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      We model directly from raw STEP, IGES, Revit, and Rhino CAD files with zero
-                      dimensional drift, ensuring physical manufacturing tolerances are respected.
-                    </p>
-                  </div>
-
-                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
-                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      PILLAR 02
-                    </span>
-                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Dedicated 1,200-Core GPU Render Farm
-                    </h3>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      Internal cloud compute handles 8K ray-traced sequences and multi-pass EXR
-                      compositing without third-party queue delays or production bottlenecks.
-                    </p>
-                  </div>
-
-                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
-                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      PILLAR 03
-                    </span>
-                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Strict Mutual NDA & Encrypted Storage
-                    </h3>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      All blueprints and unreleased product CAD files remain air-gapped on encrypted
-                      storage. 100% of source files and intellectual property transfer to you upon completion.
-                    </p>
-                  </div>
-
-                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
-                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      PILLAR 04
-                    </span>
-                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Real-Time WebGL & Native Spatial USDZ
-                    </h3>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      One master 3D dataset powers 8K print billboards, 60fps launch video, and
-                      lightweight interactive browser models ready for Apple Vision Pro.
-                    </p>
-                  </div>
-
-                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
-                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      PILLAR 05
-                    </span>
-                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Direct Senior LookDev Lead Access
-                    </h3>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      No junior account managers translating feedback. You collaborate directly with
-                      the 3D artists, texture leads, and lighting directors building your scenes.
-                    </p>
-                  </div>
-
-                  <div className="p-7 bg-[#F6F6F2] dark:bg-[#121418] border border-black/15 dark:border-white/10 space-y-3">
-                    <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      PILLAR 06
-                    </span>
-                    <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Fixed Transparent Milestone Pricing
-                    </h3>
-                    <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      Every project is scoped with guaranteed milestone gates, revision passes, and
-                      binding deliverable checklists. No open-ended billing or surprise fees.
-                    </p>
-                  </div>
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 10. AWARDS & INDUSTRY RECOGNITION */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-12">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
-                      <Trophy className="w-3.5 h-3.5" />
-                      <span>05 — INDUSTRY RECOGNITION & PEER AWARDS</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Honored for Technical & CGI Excellence.
-                    </h2>
-                  </div>
-                  <div className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
-                    16 GLOBAL INDUSTRY HONORS (2024–2026)
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                  {AWARDS.map((award) => (
-                    <div
-                      key={award.id}
-                      className="p-6 bg-white dark:bg-[#121418] border border-black/15 dark:border-white/10 flex flex-col justify-between space-y-4 hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors"
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs font-mono-tabular">
-                          <span className="px-2 py-0.5 bg-[#090A0C] text-[#FACC15] dark:bg-[#FACC15] dark:text-[#090A0C] font-bold">
-                            {award.year}
-                          </span>
-                          <span className="text-[#475569] dark:text-[#94A3B8]">
-                            {award.organization}
-                          </span>
-                        </div>
-                        <h3 className="text-base font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-snug">
-                          {award.title}
-                        </h3>
-                        <p className="text-xs text-[#475569] dark:text-[#94A3B8]">
-                          {award.category}
-                        </p>
-                      </div>
-
-                      <div className="pt-3 border-t border-black/10 dark:border-white/10 text-[10px] font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold tracking-wider">
-                        {award.badge}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 11. CLIENT STORIES & TESTIMONIALS ("What Our Partners Say") */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
-                      <Quote className="w-3.5 h-3.5" />
-                      <span>06 — VERIFIED CLIENT OUTCOMES & REVIEWS</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] leading-tight">
-                      Trusted by Leaders Across 18 Countries.
-                    </h2>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs font-mono-tabular px-3.5 py-2 bg-[#F6F6F2] dark:bg-[#181B22] border border-black/15 dark:border-white/10">
-                    <div className="flex text-[#EAB308]">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                      ))}
-                    </div>
-                    <span className="font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                      4.9 / 5.0 RATING
-                    </span>
-                    <span className="text-[#475569] dark:text-[#94A3B8]">· 64 CLUTCH REVIEWS</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {TESTIMONIALS.map((item) => (
-                    <div
-                      key={item.id}
-                      className="p-8 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] flex flex-col justify-between space-y-6"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="px-2 py-0.5 bg-[#090A0C] text-[#FACC15] dark:bg-[#FACC15] dark:text-[#090A0C] font-mono-tabular font-bold">
-                            {item.projectType}
-                          </span>
-                          <div className="flex text-[#EAB308]">
-                            {[...Array(item.rating)].map((_, i) => (
-                              <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                            ))}
-                          </div>
-                        </div>
-
-                        <blockquote className="text-sm text-[#090A0C] dark:text-[#F4F4F0] leading-relaxed">
-                          “{item.quote}”
-                        </blockquote>
-                      </div>
-
-                      <div className="pt-6 border-t border-black/10 dark:border-white/10 space-y-3">
-                        <div className="text-xs font-mono-tabular">
-                          <span className="text-[#B45309] dark:text-[#FACC15] font-semibold block">
-                            Commercial ROI:
-                          </span>
-                          <span className="text-[#090A0C] dark:text-[#F4F4F0] font-medium">
-                            {item.outcomeMetric}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-3 pt-1">
-                          <div className="w-10 h-10 bg-[#090A0C] text-[#FACC15] flex items-center justify-center font-display font-bold text-sm shrink-0">
-                            {item.avatarInitials}
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-[#090A0C] dark:text-[#F4F4F0]">
-                              {item.author}
-                            </div>
-                            <div className="text-xs text-[#475569] dark:text-[#94A3B8]">
-                              {item.role} · {item.company}
-                            </div>
-                            <div className="text-[11px] text-[#475569] dark:text-[#94A3B8]">
-                              {item.location}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 12. 3D INSIGHTS & ARTICLES ("Latest Thinking & Publications") */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#EFEFE9]/95 dark:bg-[#0B0D10]/95">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-2 flex items-center gap-2">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>07 — 3D PUBLICATIONS & THOUGHT LEADERSHIP</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Insights on Spatial CGI & Real-Time Tech.
-                    </h2>
-                  </div>
-                  <span className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
-                    PEER-REVIEWED TECHNICAL PAPERS & ARTICLES
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {INSIGHTS_ARTICLES.map((article) => (
-                    <article
-                      key={article.id}
-                      className="p-7 bg-white dark:bg-[#121418] border border-black/15 dark:border-white/10 flex flex-col justify-between space-y-5 group hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
-                          <span className="text-[#B45309] dark:text-[#FACC15] font-semibold">
-                            {article.category}
-                          </span>
-                          <span>{article.readTime}</span>
-                        </div>
-
-                        <h3 className="text-lg font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] group-hover:text-[#B45309] dark:group-hover:text-[#FACC15] transition-colors leading-snug">
-                          {article.title}
-                        </h3>
-
-                        <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                          {article.excerpt}
-                        </p>
-                      </div>
-
-                      <div className="pt-4 border-t border-black/10 dark:border-white/10 space-y-3">
-                        <div className="flex flex-wrap gap-1.5">
-                          {article.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-2 py-0.5 bg-[#F6F6F2] dark:bg-[#181B22] text-[10px] font-mono-tabular text-[#475569] dark:text-[#94A3B8]"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex items-center justify-between text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
-                          <span>By {article.author}</span>
-                          <span>{article.date}</span>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 13. FREQUENTLY ASKED QUESTIONS (FAQ Accordion) */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#0D0F12]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-14">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                  <div className="lg:col-span-5 space-y-4">
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold">
-                      08 — FREQUENTLY ASKED QUESTIONS
-                    </div>
-                    <h2 className="text-3xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Everything Answered Upfront.
-                    </h2>
-                    <p className="text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                      Questions regarding CAD ingestion, turnarounds, revision gates, source IP,
-                      and rendering resolutions. If you have unique requirements, our LookDev leads
-                      answer within 4 hours.
-                    </p>
-                    <div className="pt-4">
-                      <button
-                        type="button"
-                        onClick={() => navigateToPage('contact')}
-                        className="py-3 px-6 bg-[#090A0C] text-[#FACC15] dark:bg-[#FACC15] dark:text-[#090A0C] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
-                      >
-                        <span>Ask a Custom Technical Question</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-7 divide-y divide-black/15 dark:divide-white/10 border-t border-b border-black/15 dark:border-white/10">
-                    {FAQS.map((faq) => {
-                      const isOpen = openFaqId === faq.id;
-                      return (
-                        <div key={faq.id} className="py-5">
-                          <button
-                            type="button"
-                            onClick={() => setOpenFaqId(isOpen ? '' : faq.id)}
-                            className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group"
-                            aria-expanded={isOpen}
-                          >
-                            <div>
-                              <span className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8] block mb-1">
-                                {faq.category}
-                              </span>
-                              <span className="text-base font-display font-semibold text-[#090A0C] dark:text-[#F4F4F0] group-hover:text-[#B45309] dark:group-hover:text-[#FACC15] transition-colors">
-                                {faq.question}
-                              </span>
-                            </div>
-                            <span className="p-2 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] text-[#475569] dark:text-[#94A3B8] shrink-0">
-                              {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                            </span>
-                          </button>
-
-                          {isOpen && (
-                            <div className="mt-3 pr-10 text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                              {faq.answer}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 14. HIGH-IMPACT FINAL CALL TO ACTION ("Have a 3D Concept in Mind? Let's Talk") */}
-            <section className="py-20 lg:py-28 border-b border-black/15 dark:border-white/10 bg-[#090A0C] text-[#F4F4F0]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                  <div className="lg:col-span-6 space-y-6">
-                    <div className="inline-flex items-center gap-2 text-xs font-mono-tabular text-[#FACC15] font-semibold">
-                      <Send className="w-3.5 h-3.5" />
-                      <span>09 — START YOUR 3D COMMISSION</span>
-                    </div>
-
-                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white leading-[1.05]">
-                      Have a 3D Concept in Mind? Let’s Talk.
-                    </h2>
-
-                    <p className="text-base text-[#94A3B8] leading-relaxed max-w-xl">
-                      Whether you need an 8K architectural marketing suite, e-commerce watch turntables,
-                      or a real-time WebGL product configurator, our team provides a complimentary
-                      CAD geometry audit and guaranteed fixed proposal within 4 business hours.
-                    </p>
-
-                    <div className="pt-4 border-t border-white/15 space-y-3 text-xs font-mono-tabular">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 className="w-4 h-4 text-[#FACC15] shrink-0" />
-                        <span>Mutual Non-Disclosure Agreement (NDA) executed prior to file ingestion</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 className="w-4 h-4 text-[#FACC15] shrink-0" />
-                        <span>Guaranteed 4-hour technical proposal turnaround</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 className="w-4 h-4 text-[#FACC15] shrink-0" />
-                        <span>Direct collaboration with senior 3D LookDev leads</span>
-                      </div>
-                    </div>
-
-                    <div className="pt-6 border-t border-white/10 text-xs text-[#94A3B8] space-y-1">
-                      <div>Studio Headquarters: 123 Main Street, Suite 1400, New York, NY 10001</div>
-                      <div>Direct Producer Desk: studio@3dmodelingcompany.com · +1 (212) 555-0194</div>
-                      <div>Hubs: New York (EST) · Zurich (CET) · Tokyo (JST)</div>
-                    </div>
-                  </div>
-
-                  {/* Embedded Proposal Brief Form */}
-                  <div className="lg:col-span-6 bg-[#12151C] border border-white/15 p-6 sm:p-10 space-y-5">
-                    {formSubmitted ? (
-                      <div className="py-10 text-center space-y-4">
-                        <div className="w-14 h-14 bg-[#FACC15] text-[#090A0C] flex items-center justify-center mx-auto">
-                          <CheckCircle2 className="w-7 h-7" />
-                        </div>
-                        <h3 className="text-2xl font-display font-bold text-white">
-                          Project Brief Transferred to Production Desk
-                        </h3>
-                        <p className="text-sm text-[#94A3B8] max-w-md mx-auto">
-                          Thank you, {formName}. Adam Richter and our LookDev leads will audit your{' '}
-                          {formDiscipline} brief and respond to {formEmail} within 4 business hours.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setFormSubmitted(false)}
-                          className="py-2 px-4 text-xs bg-white/10 text-white hover:bg-white/20 transition-colors"
-                        >
-                          Submit Another Project Brief
-                        </button>
-                      </div>
-                    ) : (
-                      <form onSubmit={handleFormSubmit} className="space-y-4" noValidate>
-                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                          <h3 className="text-lg font-display font-bold text-white">
-                            Request Fixed-Scope Proposal
-                          </h3>
-                          <span className="text-xs text-[#94A3B8]">Mutual NDA Included</span>
-                        </div>
-
-                        {formError && (
-                          <div className="p-3 bg-red-950/80 border border-red-500/50 text-xs text-red-200">
-                            {formError}
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-1">
-                            <label className="text-xs text-[#CBD5E1]">Full Name *</label>
-                            <input
-                              type="text"
-                              value={formName}
-                              onChange={(e) => setFormName(e.target.value)}
-                              placeholder="e.g. Sarah Jenkins"
-                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-xs text-[#CBD5E1]">Work Email *</label>
-                            <input
-                              type="email"
-                              value={formEmail}
-                              onChange={(e) => setFormEmail(e.target.value)}
-                              placeholder="name@company.com"
-                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-1">
-                            <label className="text-xs text-[#CBD5E1]">Company / Studio</label>
-                            <input
-                              type="text"
-                              value={formCompany}
-                              onChange={(e) => setFormCompany(e.target.value)}
-                              placeholder="Firm name"
-                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-xs text-[#CBD5E1]">3D Discipline</label>
-                            <select
-                              value={formDiscipline}
-                              onChange={(e) => setFormDiscipline(e.target.value)}
-                              className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
-                            >
-                              <option>Architectural Visualization</option>
-                              <option>Luxury Product & Horology CGI</option>
-                              <option>60fps Exploded Technical Motion</option>
-                              <option>WebXR / Apple Vision USDZ Configurator</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="text-xs text-[#CBD5E1]">Estimated Budget Scope</label>
-                          <select
-                            value={formBudget}
-                            onChange={(e) => setFormBudget(e.target.value)}
-                            className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none"
-                          >
-                            <option>$1,500 – $3,000 (Single Hero Asset / Still)</option>
-                            <option>$3,000 – $7,500 (Multi-Angle Suite / Interior)</option>
-                            <option>$7,500 – $15,000 (Complete Campaign / 60fps Motion)</option>
-                            <option>$15,000+ (Enterprise Digital Twin / WebXR)</option>
-                          </select>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="text-xs text-[#CBD5E1]">Project Brief & File Formats *</label>
-                          <textarea
-                            rows={3}
-                            value={formMessage}
-                            onChange={(e) => setFormMessage(e.target.value)}
-                            placeholder="Tell us about your project, target deliverables (8K, video, WebGL), timeline, and whether you have CAD files ready..."
-                            className="w-full px-3 py-2 bg-[#090A0C] border border-white/20 text-white text-xs focus:outline-none focus:border-[#FACC15] rounded-none resize-none"
-                          />
-                        </div>
-
-                        <button
-                          type="submit"
-                          className="w-full py-3 px-6 bg-[#FACC15] hover:bg-[#EAB308] text-[#090A0C] font-semibold text-xs transition-colors rounded-none flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <span>Submit Brief for Complimentary 4-Hour Proposal</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      </form>
-                    )}
-                  </div>
-                </div>
-              </Scroll3DSection>
-            </section>
-
-            {/* 15. DEDICATED PAGE DIRECTORY CARDS (QUICK NAV) */}
-            <section className="py-20 bg-white dark:bg-[#0D0F12]">
-              <Scroll3DSection className="max-w-[1280px] mx-auto px-6 space-y-10">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-black/15 dark:border-white/10">
-                  <div>
-                    <div className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15] font-semibold mb-1">
-                      EXPLORE COMPLETE ARCHIVE
-                    </div>
-                    <h3 className="text-2xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                      Dedicated Specialized Studio Portals
-                    </h3>
-                  </div>
-                  <span className="text-xs font-mono-tabular text-[#475569] dark:text-[#94A3B8]">
-                    SEPARATE PAGES · INSTANT ACCESS
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <Tilt3DCard
-                    onClick={() => navigateToPage('services')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
-                  >
-                    <div>
-                      <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
-                        01 / PAGE
-                      </span>
-                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        3D Services & Pipeline
-                      </h4>
-                      <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Detailed specifications on modeling, rendering, animation, and AR workflows.
-                      </p>
-                    </div>
-                    <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
-                      <span>Open Services Page</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </Tilt3DCard>
-
-                  <Tilt3DCard
-                    onClick={() => navigateToPage('models')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
-                  >
-                    <div>
-                      <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
-                        02 / PAGE
-                      </span>
-                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        Interactive 3D Studio
-                      </h4>
-                      <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        10 live procedural WebGL models with PBR, clay matcaps, and exploded cutaways.
-                      </p>
-                    </div>
-                    <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
-                      <span>Open 3D Studio Page</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </Tilt3DCard>
-
-                  <Tilt3DCard
-                    onClick={() => navigateToPage('portfolio')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
-                  >
-                    <div>
-                      <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
-                        03 / PAGE
-                      </span>
-                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        8K Portfolio Archive
-                      </h4>
-                      <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Case studies across architecture, horology, automotive, and aerospace.
-                      </p>
-                    </div>
-                    <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
-                      <span>Open Portfolio Page</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </Tilt3DCard>
-
-                  <Tilt3DCard
-                    onClick={() => navigateToPage('estimator')}
-                    className="p-6 border border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#121418] hover:border-[#090A0C] dark:hover:border-[#FACC15] transition-colors cursor-pointer flex flex-col justify-between space-y-6"
-                  >
-                    <div>
-                      <span className="text-xs font-mono-tabular text-[#B45309] dark:text-[#FACC15]">
-                        04 / PAGE
-                      </span>
-                      <h4 className="text-xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] mt-2">
-                        Instant Scope Estimator
-                      </h4>
-                      <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-2 leading-relaxed">
-                        Configure geometric complexity, SKUs, and resolutions for instant pricing.
-                      </p>
-                    </div>
-                    <span className="text-xs font-semibold inline-flex items-center gap-1.5 text-[#090A0C] dark:text-[#FACC15]">
-                      <span>Open Estimator Page</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </Tilt3DCard>
-                </div>
-              </Scroll3DSection>
-            </section>
-          </div>
-        )}
-
-        {/* -------------------------------------------------------------------
-            PAGE: HOME 2 (MUSEMIND AGENCY EDITION)
-            Dedicated client-presentation page mirroring https://musemind.agency/
-            Complete with obsidian dark aesthetic, volt lime accents, live 3D showreel,
-            kinetic scroll, and full bespoke 3D studio copy.
-        -------------------------------------------------------------------- */}
-        {activePage === 'home2' && (
           <HomeTwoMusemind
             onNavigatePage={(page) => navigateToPage(page as PageId)}
+            onSelectService={navigateToService}
             onSelectProject={(project) => setActiveLightboxProject(project)}
             onSelectModel={(preset) => {
               setSelectedStudioModel(preset);
@@ -1389,99 +329,96 @@ export default function App() {
         )}
 
         {/* -------------------------------------------------------------------
-            PAGE 2: SERVICES & 4-STAGE PIPELINE PAGE
+            PAGE 2: SERVICES & CAPABILITIES DIRECTORY
         -------------------------------------------------------------------- */}
         {activePage === 'services' && (
           <div>
-            <section className="py-16 lg:py-24 border-b border-black/15 dark:border-white/10">
+            <section className="py-16 lg:py-24 border-b border-black/15 dark:border-white/10 bg-white dark:bg-[#090A0C]">
               <Scroll3DSection className="max-w-[1280px] mx-auto px-6">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14 pb-8 border-b border-black/15 dark:border-white/10">
                   <div>
-                    <div className="text-xs text-[#B45309] dark:text-[#FACC15] font-semibold mb-2">
-                      Dedicated Services & Capabilities Page
+                    <div className="text-xs text-[#0A0A0E] dark:text-[#FACC15] font-mono-tabular font-bold uppercase mb-2">
+                      3D SERVICES DIRECTORY & CAPABILITIES
                     </div>
-                    <h1 className="text-4xl sm:text-5xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] max-w-2xl">
+                    <h1 className="text-4xl sm:text-6xl font-display font-extrabold text-[#090A0C] dark:text-[#F4F4F0] max-w-2xl">
                       Innovative 3D Design Solutions.
                     </h1>
                   </div>
                   <p className="text-sm text-[#475569] dark:text-[#94A3B8] max-w-md leading-relaxed">
-                    We bring your ideas to life with pure realistic 3D solutions, immersive
-                    experiences, and modern visualization technologies across four specialized
-                    production pipelines.
+                    Explore our specialized 3D pipelines. Click any service to view its dedicated single service page, full specifications, production milestones, and pricing tiers.
                   </p>
                 </div>
 
-                {/* Asymmetric Bento Grid of the 4 Services */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  {SERVICES.map((service, idx) => {
-                    const isWide = idx === 0 || idx === 3;
-                    return (
-                      <article
-                        key={service.id}
-                        className={`${
-                          isWide ? 'lg:col-span-7' : 'lg:col-span-5'
-                        } border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] overflow-hidden flex flex-col justify-between group hover:border-black/40 dark:hover:border-white/25 transition-colors`}
-                      >
-                        <div className="relative aspect-16/9 w-full overflow-hidden bg-[#0D0F12]">
-                          <img
-                            src={service.image}
-                            alt={service.title}
-                            referrerPolicy="no-referrer"
-                            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-xs text-[#E2E8F0]">
-                            <span className="font-mono-tabular text-[#FACC15] font-semibold">
-                              Lead Time: {service.leadTime}
-                            </span>
-                            <span className="text-[#CBD5E1] font-mono-tabular">
-                              {service.formats}
-                            </span>
-                          </div>
+                {/* Grid of the 6 Specialized 3D Services */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {DETAILED_SERVICES.map((service) => (
+                    <article
+                      key={service.id}
+                      onClick={() => navigateToService(service.id)}
+                      className="border border-black/15 dark:border-white/10 bg-white dark:bg-[#121418] overflow-hidden flex flex-col justify-between group hover:border-[#0A0A0E] dark:hover:border-[#FACC15] transition-all cursor-pointer shadow-xs hover:shadow-lg"
+                    >
+                      <div className="relative aspect-16/9 w-full overflow-hidden bg-[#0D0F12]">
+                        <img
+                          src={service.heroImage}
+                          alt={service.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                        <div className="absolute top-3 left-3 px-2.5 py-1 bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono-tabular font-bold">
+                          SERVICE {service.number}
+                        </div>
+                        <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-[#E2E8F0]">
+                          <span className="font-mono-tabular text-[#D4FF00] font-bold text-[11px]">
+                            {service.leadTime}
+                          </span>
+                          <span className="text-[#CBD5E1] font-mono-tabular text-[10px]">
+                            {service.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-5">
+                        <div className="space-y-2.5">
+                          <h2 className="text-xl sm:text-2xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0] group-hover:text-black dark:group-hover:text-white transition-colors">
+                            {service.title}
+                          </h2>
+                          <p className="text-xs font-medium text-[#52525B] dark:text-[#E2E8F0]">
+                            {service.subtitle}
+                          </p>
+                          <p className="text-xs text-[#6B7280] dark:text-[#94A3B8] leading-relaxed line-clamp-3">
+                            {service.overview}
+                          </p>
                         </div>
 
-                        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
-                          <div className="space-y-3">
-                            <h2 className="text-xl sm:text-2xl font-display font-bold text-[#090A0C] dark:text-[#F4F4F0]">
-                              {service.title}
-                            </h2>
-                            <p className="text-xs font-medium text-[#1E293B] dark:text-[#E2E8F0]">
-                              {service.subtitle}
-                            </p>
-                            <p className="text-sm text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                              {service.description}
-                            </p>
+                        <div className="pt-4 border-t border-black/10 dark:border-white/10 space-y-3">
+                          <div className="text-[11px] font-mono-tabular text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>{service.outcomeStat}</span>
                           </div>
 
-                          <div className="pt-5 border-t border-black/10 dark:border-white/10 space-y-3">
-                            <div className="text-xs text-[#475569] dark:text-[#94A3B8]">
-                              <span className="text-[#090A0C] dark:text-[#F4F4F0] font-semibold">
-                                Deliverables:{' '}
-                              </span>
-                              <span>{service.deliverables}</span>
-                            </div>
+                          <div className="flex items-center justify-between gap-3 pt-1">
+                            <span className="text-xs font-bold text-[#0A0A0E] dark:text-[#FACC15] group-hover:underline inline-flex items-center gap-1">
+                              <span>Open Service Page</span>
+                              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                            </span>
 
-                            <div className="flex items-center justify-between gap-4 pt-1">
-                              <span className="text-xs text-[#B45309] dark:text-[#FACC15] font-medium">
-                                {service.outcomeStat}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFormDiscipline(service.title);
-                                  navigateToPage('estimator');
-                                }}
-                                className="text-xs font-semibold text-[#090A0C] dark:text-[#F4F4F0] hover:text-[#B45309] dark:hover:text-[#FACC15] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-colors cursor-pointer"
-                              >
-                                <span>Calculate Service Cost</span>
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setFormDiscipline(service.title);
+                                navigateToPage('estimator');
+                              }}
+                              className="text-[11px] font-semibold text-[#52525B] dark:text-[#94A3B8] hover:text-[#0A0A0E] dark:hover:text-[#FACC15] px-2 py-1 bg-[#F4F5F7] dark:bg-[#1E232B] transition-colors cursor-pointer"
+                            >
+                              Estimator
+                            </button>
                           </div>
                         </div>
-                      </article>
-                    );
-                  })}
+                      </div>
+                    </article>
+                  ))}
                 </div>
               </Scroll3DSection>
             </section>
@@ -1614,6 +551,18 @@ export default function App() {
               </Scroll3DSection>
             </section>
           </div>
+        )}
+
+        {/* -------------------------------------------------------------------
+            PAGE 2B: DEDICATED SINGLE SERVICE DETAIL PAGE
+        -------------------------------------------------------------------- */}
+        {activePage === 'service-detail' && (
+          <ServiceDetailPage
+            service={getServiceById(selectedServiceId) || DETAILED_SERVICES[0]}
+            onNavigatePage={(page) => navigateToPage(page as PageId)}
+            onSelectService={navigateToService}
+            onCommissionService={handleCommissionService}
+          />
         )}
 
         {/* -------------------------------------------------------------------
@@ -2180,13 +1129,13 @@ export default function App() {
           QUIET EDITORIAL FOOTER WITH UPDATED BRAND LOGO & PAGE ROUTING
       ====================================================================== */}
       <footer className={`border-t py-16 text-xs transition-colors duration-150 ${
-        activePage === 'home2'
+        activePage === 'home'
           ? 'bg-[#FAFAFA] border-[#E5E7EB] text-[#52525B]'
           : 'border-black/15 dark:border-white/10 bg-[#F6F6F2] dark:bg-[#090A0C] text-[#475569] dark:text-[#94A3B8]'
       }`}>
         <div className="max-w-[1280px] mx-auto px-6">
           <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b ${
-            activePage === 'home2' ? 'border-[#E5E7EB]' : 'border-black/15 dark:border-white/10'
+            activePage === 'home' ? 'border-[#E5E7EB]' : 'border-black/15 dark:border-white/10'
           }`}>
             {/* Brand Column */}
             <div className="lg:col-span-4 space-y-4">
